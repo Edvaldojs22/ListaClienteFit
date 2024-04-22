@@ -20,6 +20,6 @@ import Cliente from "./components/Cliente.vue";
     max-width: 800px;
     margin: 35px auto;
     font-family: "itim";
-    color: #78a420;
+    color: #00852c;
 }
 </style>

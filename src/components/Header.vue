@@ -2,6 +2,7 @@
 import axios from "axios";
 import IconFilter from "../assets/img/filter.png";
 
+
 export default {
   data() {
     return {
@@ -67,7 +68,7 @@ header {
   max-width: 800px;
   height: 170px;
   margin: 0 auto;
-  background-color: #1b372a;
+  background-color: #0d2a14;
   border-bottom-left-radius: 30px;
   border-bottom-right-radius: 30px;
   position: relative;
