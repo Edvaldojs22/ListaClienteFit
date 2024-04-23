@@ -1,8 +1,9 @@
 <script setup>
+import { ref } from "vue";
 import IconUser from "../assets/img/user.png";
 import IconMuscle from "../assets/img/muscle.png";
-import IconArrow from "../assets/img/arrow.png"
-
+import IconArrow from "../assets/img/arrow.png";
+import {onMounted} from "vue";
 const listaClientes = [
   {
     id: 1,
@@ -112,20 +113,62 @@ const listaClientes = [
     telefone: "(82) 91234-5678",
     vencimento: "18",
   },
+  {
+    id: 19,
+    nome: "Luciana",
+    telefone: "(83) 99876-5432",
+    vencimento: "21",
+  },
+  {
+    id: 20,
+    nome: "Ricardo",
+    telefone: "(84) 98765-4321",
+    vencimento: "14",
+  },
+  {
+    id: 21,
+    nome: "Fábio",
+    telefone: "(85) 91234-5678",
+    vencimento: "30",
+  },
+  {
+    id: 22,
+    nome: "Patrícia",
+    telefone: "(86) 99876-5432",
+    vencimento: "25",
+  },
 ];
-
-let indexInicio = 0 ;
-let indexFim = 6;
-
-
-const proximaPagina = () =>{
-  indexInicio = indexInicio + 6;
-  indexFim = indexFim + 6;
-  console.log(indexFim)
-}
+  
+ 
+ onMounted(() => {
+ const elementosPag = document.querySelectorAll('.pag');
+ console.log(elementosPag)
+ })
 
 
+const indexInicio = ref(0);
+const indexFim = ref(6);
 
+const proximaPagina = (event) => {
+  const tagId = event.target.id;
+  if (tagId == "arrowRigth") {
+    console.log(listaClientes.length);
+
+    if (listaClientes.length >= indexFim.value) {
+      indexInicio.value += 6;
+      indexFim.value += 6;
+    }
+  } else {
+    if (indexInicio.value == 0) {
+    } else {
+      indexInicio.value -= 6;
+      indexFim.value -= 6;
+    }
+  }
+};
+
+ 
+  
 </script>
 
 
@@ -133,9 +176,8 @@ const proximaPagina = () =>{
   <div class="painel_clientes">
     <div
       class="painel_img_infos"
-      v-for="(cliente, index) in listaClientes.slice(indexInicio, indexFim)"
-      :key="cliente.id"
-    >
+      v-for="cliente in listaClientes.slice(indexInicio, indexFim)"
+      :key="cliente.id">
       <img class="img_user" :src="IconUser" alt="" />
       <div>
         <p>{{ cliente.nome }}</p>
@@ -146,10 +188,24 @@ const proximaPagina = () =>{
 
     <div class="painel_paginacao">
       <div class="painel_array_pag">
-        <img class="arrowLeft" :src="IconArrow" alt="">
+        <img
+          id="rrowLeft"
+          @click="proximaPagina"
+          class="arrowLeft"
+          :src="IconArrow"
+          alt=""
+        />
         <div class="pag">1</div>
-        <div v-on:click="proximaPagina" class="pag">2</div>
-        <img class="arrowRigth" :src="IconArrow" alt="">
+        <div class="pag">2</div>
+        <div class="pag">3</div>
+        <div class="pag">4</div>
+        <img
+          id="arrowRigth"
+          @click="proximaPagina"
+          class="arrowRigth"
+          :src="IconArrow"
+          alt=""
+        />
       </div>
 
       <div class="painel_icon_text">
@@ -168,6 +224,8 @@ const proximaPagina = () =>{
   max-width: 600px;
   margin: 0 auto;
   padding: 0 5px;
+  height: 550px;
+  position: relative;
 }
 
 .img_user {
@@ -201,42 +259,44 @@ const proximaPagina = () =>{
   font-size: 20px;
 }
 
-
-
-.painel_paginacao{
-display: flex;
-flex-direction: column;
-align-items: center;
+.painel_paginacao {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+  bottom: 0;
 }
 
-.painel_array_pag{
+.painel_array_pag {
   display: flex;
   gap: 20px;
   position: relative;
 }
 
-.painel_array_pag div{
+.painel_array_pag div {
   border: solid 1px #0d2a14;
   padding: 1px 5px;
   border-radius: 3px;
 }
 
-.painel_array_pag img{
+.painel_array_pag img {
   position: absolute;
   width: 25px;
   height: 25px;
 }
 
-.arrowLeft{
+.arrowLeft {
   left: -30px;
   transform: rotate(180deg);
 }
 
-.arrowRigth{
+.arrowRigth {
   right: -30px;
 }
 
-.painel_icon_text{
+.painel_icon_text {
   color: #0d2a14;
   display: flex;
   flex-direction: column;
@@ -245,7 +305,7 @@ align-items: center;
   margin: 0 auto;
 }
 
-.painel_icon_text img{
+.painel_icon_text img {
   width: 50px;
   height: 38px;
 }
