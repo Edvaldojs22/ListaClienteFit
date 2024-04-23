@@ -3,7 +3,8 @@ import { ref } from "vue";
 import IconUser from "../assets/img/user.png";
 import IconMuscle from "../assets/img/muscle.png";
 import IconArrow from "../assets/img/arrow.png";
-import {onMounted} from "vue";
+
+
 const listaClientes = [
   {
     id: 1,
@@ -138,34 +139,34 @@ const listaClientes = [
     vencimento: "25",
   },
 ];
-  
- 
- onMounted(() => {
- const elementosPag = document.querySelectorAll('.pag');
- console.log(elementosPag)
- })
+
 
 
 const indexInicio = ref(0);
 const indexFim = ref(6);
+const pocicaoPagina = ref (1)
+
 
 const proximaPagina = (event) => {
   const tagId = event.target.id;
   if (tagId == "arrowRigth") {
-    console.log(listaClientes.length);
+    
 
     if (listaClientes.length >= indexFim.value) {
       indexInicio.value += 6;
       indexFim.value += 6;
+      pocicaoPagina.value += 1;
     }
   } else {
     if (indexInicio.value == 0) {
     } else {
       indexInicio.value -= 6;
       indexFim.value -= 6;
+       pocicaoPagina.value -= 1;
     }
   }
 };
+
 
  
   
@@ -195,10 +196,9 @@ const proximaPagina = (event) => {
           :src="IconArrow"
           alt=""
         />
-        <div class="pag">1</div>
-        <div class="pag">2</div>
-        <div class="pag">3</div>
-        <div class="pag">4</div>
+
+        <div class="pag">{{pocicaoPagina}}</div>
+
         <img
           id="arrowRigth"
           @click="proximaPagina"
@@ -224,39 +224,39 @@ const proximaPagina = (event) => {
   max-width: 600px;
   margin: 0 auto;
   padding: 0 5px;
-  height: 550px;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
 }
 
 .img_user {
-  widows: 55px;
-  height: 55px;
+  widows: 45px;
+  height: 45px;
   margin-left: 5px;
 }
 .painel_img_infos {
   position: relative;
-  font-size: 18px;
   border-bottom: solid 2px #00852c;
-  margin-bottom: 10px;
 }
 
 .painel_img_infos div {
   display: inline-block;
   vertical-align: top;
   margin: 0 0 0 10px;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .painel_img_infos div p:nth-child(1) {
   margin-bottom: 5px;
-  font-size: 20px;
+  font-size: 17px;
 }
 
 .vencimento {
   position: absolute;
   right: 10px;
   bottom: 5px;
-  font-size: 20px;
+  font-size: 1.5rem;
 }
 
 .painel_paginacao {
@@ -266,34 +266,48 @@ const proximaPagina = (event) => {
   position: absolute;
   left: 50%;
   transform: translate(-50%);
-  bottom: 0;
+  bottom: 85px;
 }
 
 .painel_array_pag {
   display: flex;
-  gap: 20px;
+  gap: 10px;
   position: relative;
 }
 
 .painel_array_pag div {
-  border: solid 1px #0d2a14;
-  padding: 1px 5px;
-  border-radius: 3px;
+  background-color: #154621;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  color: white;
+  
 }
 
 .painel_array_pag img {
   position: absolute;
-  width: 25px;
-  height: 25px;
+  top: -5px;
+  cursor: pointer;
+  width: 35px;
+  height: 35px;
+  padding: 6px;
+  border-radius: 50%;
+}
+.painel_array_pag img:hover{
+  background-color: rgba(128, 128, 128, 0.522);
 }
 
 .arrowLeft {
-  left: -30px;
+  left: -80px;
   transform: rotate(180deg);
 }
 
 .arrowRigth {
-  right: -30px;
+  right: -80px;
 }
 
 .painel_icon_text {
@@ -302,11 +316,12 @@ const proximaPagina = (event) => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 0 auto;
+  margin: 8px auto 0;
+  font-size: 12px;
 }
 
 .painel_icon_text img {
-  width: 50px;
-  height: 38px;
+  width: 40px;
+  height: 28px;
 }
 </style>
