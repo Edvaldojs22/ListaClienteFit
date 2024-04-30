@@ -2,22 +2,29 @@
 import Header from "./components/Header.vue";
 import Cliente from "./components/Cliente.vue";
 import RodaPe from "./components/RodaPe.vue";
-import {onMounted} from "vue";
+import { onMounted } from "vue";
 
- onMounted(() => {
- const tela = document.querySelector('.campo_pesquisa_cliente');
+onMounted(() => {
+  const telaPesquisa = document.querySelector(".campo_pesquisa_cliente");
+  const telaLista = document.querySelector(".campo_pesquisa_lista");
 
- const lupa = document.querySelector('.pi-search').addEventListener('click', () =>{
-    tela.style.display = "flex";
-  })
- const botaoPesquisa = document.querySelector('.botaoPesquisa').addEventListener('click', () =>{
-    tela.style.display = "none";
-  })
+//Tela Pesquisa Clientes
+  const lupa = document
+    .querySelector(".pi-search")
+    .addEventListener("click", () => {
+      telaPesquisa.style.display = "flex";
+    });
+  const botaoPesquisa = document
+    .querySelector(".botaoPesquisa")
+    .addEventListener("click", () => {
+      telaPesquisa.style.display = "none";
+    });
 
-
- })
-
-
+//Tela Pesquisa Lista Clientes
+const filter = document.querySelector('.img_filter').addEventListener("click", () =>{
+  telaLista.style.display = "flex"
+})
+});
 </script>
 
 <template>
@@ -31,8 +38,6 @@ import {onMounted} from "vue";
 </template>
 
 <style scoped>
-
-
 .lista_clientes {
   height: 500px;
   width: 100%;

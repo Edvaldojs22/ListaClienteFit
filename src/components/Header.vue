@@ -1,38 +1,30 @@
-<script >
+<script setup>
 import axios from "axios";
 import IconFilter from "../assets/img/filter.png";
 
-export default {
-  data() {
-    return {
-      IconFilter: IconFilter,
-      mesAtual: "",
-      diaAtual: "",
-      nomePesquisado:"",
-    };
-  },
-  mounted() {
-    this.obterDataHora();
-  },
+let mesAtual = "";
+let diaAtual = "";
+let nomePesquisado = "";
 
-  methods: {
-    async obterDataHora() {
-      try {
-        const resposta = await axios.get("https://worldtimeapi.org/api/ip");
-        const dataHora = new Date(resposta.data.datetime);
-        const mes = dataHora.toLocaleString("default", { month: "long" });
-        const dia = dataHora.getDate();
-        this.mesAtual = mes;
-        this.diaAtual = dia;
-      } catch (erro) {
-        console.error("Erro ao obter data e hora:", erro);
-      }
-    },
-    enviarFormulario() {
-      console.log(this.nomePesquisado);
-    },
-  },
+const obterDataHora = async () => {
+  try {
+    const resposta = await axios.get("https://worldtimeapi.org/api/ip");
+    const dataHora = new Date(resposta.data.datetime);
+    const mes = dataHora.toLocaleString("default", { month: "long" });
+    const dia = dataHora.getDate();
+    mesAtual = mes;
+    diaAtual = dia;
+  } catch (erro) {
+    console.error("Erro ao obter data e hora:", erro);
+  }
 };
+
+const enviarFormulario = () => {
+  console.log(nomePesquisado);
+};
+const opcaoListas = () => {};
+
+obterDataHora();
 </script>
 
 <template>
@@ -50,10 +42,22 @@ export default {
             placeholder="Pesquisa Cliente"
             v-model="nomePesquisado"
           />
-          <label class="botaoPesquisa" for="pesquiseCliente" @click="enviarFormulario">Enviar</label>
+          <label
+            class="botaoPesquisa"
+            for="pesquiseCliente"
+            @click="enviarFormulario"
+            >Enviar</label
+          >
         </div>
 
-        <img class="img_filter" :src="IconFilter" alt="" />
+        <div class="campo_pesquisa_lista">
+          <p>Clientes Ativos</p>
+          <p>Clientes Inativos</p>
+        </div>
+
+        <img @click="opcaoListas" class="img_filter" :src="IconFilter" alt="" />
+
+        <div></div>
       </div>
     </div>
     <div class="painel_data_number">
@@ -105,6 +109,35 @@ header {
   font-family: "itim";
 }
 
+.campo_pesquisa_lista {
+  background-color: rgba(102, 102, 102, 0.876);
+  backdrop-filter: blur(5px);
+  position: absolute;
+  left: 50%;
+  top: 200px;
+  transform: translate(-50%);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  width: 300px;
+  border-radius: 20px;
+  z-index: 1;
+  font-family: sans-serif;
+}
+
+.campo_pesquisa_lista p {
+  border: solid 1px #0d2a14;
+  background-color: #0d2a14;
+  border-radius: 15px;
+  width: calc(100% - 50px);
+  padding: 10px 0;
+  max-width: 400px;
+  text-align: center;
+  color: #ffffff;
+}
+
+
+
 .campo_pesquisa_cliente label {
   margin-top: 30px;
   padding: 4px 20px;
@@ -142,6 +175,11 @@ header {
 .painel_icons i {
   margin-right: 20px;
   font-size: 25px;
+}
+
+.painel_icons i,
+img {
+  cursor: pointer;
 }
 
 .img_filter {

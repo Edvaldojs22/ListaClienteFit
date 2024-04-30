@@ -1,46 +1,76 @@
 <script setup>
-import { onMounted } from "vue";
-import axios from 'axios';
+import { onMounted, ref } from "vue";
+import axios from "axios";
 import IconUser from "../assets/img/user.png";
 import IconMuscle from "../assets/img/muscle.png";
 import IconArrow from "../assets/img/arrow.png";
 
+const clientes = ref([]);
+const totalClientes = ref();
+const clientesAtivos = ref([]);
+const clientesInativos = ref([]);
 
-const listaClientes = [{}]
+const clientesAtivosFiltrados = ref([]);
 
-const carregarClientes = async () =>{
-  try{
-    const response = await axios.get('http://localhost:3000/clientes')
-   console.log(response)
-    
-    listaClientes.value =response.data.slice(0,6);
-  } catch(erro){
-    console.error('Erro ao carregar clientes:', erro)
+let pocicao0 = ref(0);
+let pocicao6 = ref(6);
+
+const carregarClientes = async () => {
+  try {
+    const response = await axios.get("http://localhost:3000/clientes");
+    clientes.value = response.data;
+    totalClientes.value = clientes.value.length;
+ 
+
+    clientesAtivos.value = clientes.value //Clientes Ativos
+      .filter((cliente) => cliente.active)
+      .slice(pocicao0.value, pocicao6.value); 
+      
+  } catch (erro) {
+    console.error("Erro ao carregar clientes:", erro);
   }
-}
-onMounted(carregarClientes)
+};
+carregarClientes();
 
-console.log(listaClientes)
-  
+
+const proximaPagina = (event) => {
+  const arrwId = event.target.id;
+  if (arrwId === "arrowRigth") {
+    if (totalClientes.value > pocicao0.value) {
+      pocicao0.value += 6;
+      pocicao6.value += 6;
+      carregarClientes();
+    }
+  } else if (arrwId === "arrowLeft") {
+    if (pocicao0.value > 0) {
+      pocicao0.value -= 6;
+      pocicao6.value -= 6;
+      carregarClientes();
+    }
+  }
+};
 </script>
 
 
 <template>
   <div class="painel_clientes">
-    <div class="painel_img_infos"
-    v-for="(cliente) in listaClientes" :key="cliente.id">
+    <div
+      class="painel_img_infos"
+      v-for="cliente in clientesAtivos"
+      :key="cliente.id"
+    >
       <img class="img_user" :src="IconUser" alt="" />
       <div>
-        <p>{{cliente.name}}</p>
-        <p></p>
+        <p>{{ cliente.name }}</p>
+        <p>{{ cliente.phone }}</p>
       </div>
-      <p class="vencimento"></p>
+      <p class="vencimento">{{ cliente.dueDay }}</p>
     </div>
 
     <div class="painel_paginacao">
       <div class="painel_array_pag">
         <img
-          id="rrowLeft"
+          id="arrowLeft"
           @click="proximaPagina"
           class="arrowLeft"
           :src="IconArrow"
@@ -135,7 +165,6 @@ console.log(listaClientes)
   justify-content: center;
   align-content: center;
   color: white;
-  
 }
 
 .painel_array_pag img {
@@ -147,7 +176,7 @@ console.log(listaClientes)
   padding: 6px;
   border-radius: 50%;
 }
-.painel_array_pag img:hover{
+.painel_array_pag img:hover {
   background-color: #3594553b;
 }
 
