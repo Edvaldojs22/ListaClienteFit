@@ -1,30 +1,26 @@
 <script setup>
-import { onMounted, ref, defineProps } from "vue";
 import axios from "axios";
+import { onMounted, ref } from "vue";
+import { useStore } from "vuex";
+import IconZap from "../assets/img/zap.png";
+import IconAdd from "../assets/img/add.png";
+import IconUserFooter from "../assets/img/userFooter .png";
+import { defineProps } from "vue";
 import IconUser from "../assets/img/user.png";
 import IconMuscle from "../assets/img/muscle.png";
 import IconArrow from "../assets/img/arrow.png";
 import IconFilter from "../assets/img/filter.png";
 
-const clientesAtivos = ref([]);
-const quantidadeCliente = ref();
-let clienteExibido = ref([]);
-
-let pocicao0 = ref(0);
-let pocicao6 = ref(6);
-let nomePesquisado = "";
-let numeroPagina = 1;
-
-
-const clientesInativos = ref([]);
-
-//Obter dia Atual para filtrar os clientes
+//Codigo para obter data e Hora
+let mesAtual = ref("");
 let diaAtual = ref("");
 const obterDataHora = async () => {
   try {
     const resposta = await axios.get("https://worldtimeapi.org/api/ip");
     const dataHora = new Date(resposta.data.datetime);
+    const mes = dataHora.toLocaleString("default", { month: "long" });
     const dia = dataHora.getDate();
+    mesAtual.value = mes;
     diaAtual.value = dia;
   } catch (erro) {
     console.error("Erro ao obter data e hora:", erro);
@@ -32,8 +28,17 @@ const obterDataHora = async () => {
 };
 obterDataHora();
 
+// -------------------------------->
 
+const clientesAtivos = ref([]);
+const quantidadeCliente = ref();
+let clienteExibido = ref([]);
+let pocicao0 = ref(0);
+let pocicao6 = ref(6);
+let nomePesquisado = "";
+let numeroPagina = 1;
 
+const clientesInativos = ref([]);
 
 const carregarClientes = async () => {
   try {
@@ -80,19 +85,16 @@ onMounted(() => {
 
 //Pesquia Cliente
 const enviarFormulario = () => {
-  buscaClientePeloNome(nomePesquisado)
+  buscaClientePeloNome(nomePesquisado);
 };
 
-const buscaClientePeloNome = (nome) =>{
- 
-   clienteExibido.value = clienteExibido.value.filter((cliente) =>
-    cliente.name.toLowerCase().includes(nome.toLowerCase()) || 
-    cliente.phone.includes(nome)
+const buscaClientePeloNome = (nome) => {
+  clienteExibido.value = clienteExibido.value.filter(
+    (cliente) =>
+      cliente.name.toLowerCase().includes(nome.toLowerCase()) ||
+      cliente.phone.includes(nome)
   );
-
-}
-
-
+};
 
 //Codigo responsavel por mudar a lista
 const buscaClienteInativos = async (event) => {
@@ -116,7 +118,6 @@ const buscaClienteInativos = async (event) => {
   }
 };
 
-
 //Proxima pagina
 const proximaPagina = (event) => {
   const arrwId = event.target.id;
@@ -125,8 +126,7 @@ const proximaPagina = (event) => {
       pocicao0.value += 6;
       pocicao6.value += 6;
       numeroPagina += 1;
-       carregarClientes();
-      
+      carregarClientes();
     }
   } else if (arrwId === "arrowLeft") {
     if (pocicao0.value > 0) {
@@ -143,79 +143,194 @@ const proximaPagina = (event) => {
 
 
 <template>
-  <div class="painel_clientesAtivos">
-    <div class="painel_icons">
-      <i class="pi pi-search"></i>
-      <img @click="opcaoListas" class="img_filter" :src="IconFilter" alt="" />
-
-      <div></div>
-    </div>
-    <div class="campo_pesquisa_cliente">
-      <input
-        class="pesquisa_cliente"
-        type="text"
-        name=""
-        id="pesquiseCliente"
-        placeholder="Pesquisa Cliente"
-        v-model="nomePesquisado"
-      />
-      <label
-        class="botaoPesquisa"
-        for="pesquiseCliente"
-        @click="enviarFormulario"
-        >Enviar</label
-      >
-    </div>
-
-    <div class="campo_pesquisa_lista">
-      <p @click="buscaClienteInativos" id="ativos">Clientes Ativos</p>
-      <p @click="buscaClienteInativos" id="inativos">Clientes Inativos</p>
-    </div>
-    <div
-      class="painel_img_infos"
-      v-for="cliente in clienteExibido"
-      :key="cliente.id"
-    >
-      <img class="img_user" :src="IconUser" alt="" />
-      <div>
-        <p>{{ cliente.name }}</p>
-        <p>{{ cliente.phone }}</p>
+  <div>
+    <header>
+      <div class="painel_text_icons">
+        <p>Clientes</p>
       </div>
-      <p class="vencimento">{{ cliente.dueDay }}</p>
-    </div>
-
-    <div class="painel_paginacao">
-      <div class="painel_array_pag">
-        <img
-          id="arrowLeft"
-          @click="proximaPagina"
-          class="arrowLeft"
-          :src="IconArrow"
-          alt=""
-        />
-
-        <div class="pag">{{ numeroPagina }}</div>
-
-        <img
-          id="arrowRigth"
-          @click="proximaPagina"
-          class="arrowRigth"
-          :src="IconArrow"
-          alt=""
-        />
+      <div class="painel_icons">
+        <i class="pi pi-search"></i>
+        <img @click="opcaoListas" class="img_filter" :src="IconFilter" alt="" />
       </div>
 
-      <div class="painel_icon_text">
-        <img :src="IconMuscle" alt="" />
-        <p>VIVA EN MOVIMENTO</p>
+      <div class="painel_data_number">
+        <div class="entradas_saidas">
+          <p>{{ mesAtual }}</p>
+          <p>8</p>
+          <p>Entradas</p>
+        </div>
+        <div class="ativos">
+          <p>{{ mesAtual }}</p>
+          <p>50</p>
+          <p>Ativos</p>
+        </div>
+        <div class="entradas_saidas">
+          <p>{{ mesAtual }}</p>
+          <p>2</p>
+          <p>Saidas</p>
+        </div>
       </div>
-    </div>
+      <p class="dia_atual">Dia: {{ diaAtual }}</p>
+    </header>
+
+    <!-- Lista de Clientes ------------------------------------------------------------------>
+    <main class="lista_clientes">
+      <div class="painel_clientesAtivos">
+        <div class="campo_pesquisa_cliente">
+          <input
+            class="pesquisa_cliente"
+            type="text"
+            name=""
+            id="pesquiseCliente"
+            placeholder="Pesquisa Cliente"
+            v-model="nomePesquisado"
+          />
+          <label
+            class="botaoPesquisa"
+            for="pesquiseCliente"
+            @click="enviarFormulario"
+            >Enviar</label
+          >
+        </div>
+
+        <div class="campo_pesquisa_lista">
+          <p @click="buscaClienteInativos" id="ativos">Clientes Ativos</p>
+          <p @click="buscaClienteInativos" id="inativos">Clientes Inativos</p>
+        </div>
+        <div
+          class="painel_img_infos"
+          v-for="cliente in clienteExibido"
+          :key="cliente.id"
+        >
+          <img class="img_user" :src="IconUser" alt="" />
+          <div>
+            <p>{{ cliente.name }}</p>
+            <p>{{ cliente.phone }}</p>
+          </div>
+          <p class="vencimento">{{ cliente.dueDay }}</p>
+        </div>
+
+        <div class="painel_paginacao">
+          <div class="painel_array_pag">
+            <img
+              id="arrowLeft"
+              @click="proximaPagina"
+              class="arrowLeft"
+              :src="IconArrow"
+              alt=""
+            />
+
+            <div class="pag">{{ numeroPagina }}</div>
+
+            <img
+              id="arrowRigth"
+              @click="proximaPagina"
+              class="arrowRigth"
+              :src="IconArrow"
+              alt=""
+            />
+          </div>
+
+          <div class="painel_icon_text">
+            <img :src="IconMuscle" alt="" />
+            <p>VIVA EN MOVIMENTO</p>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- -------------------------------------------------------------- -->
+
+    <footer>
+      <img :src="IconZap" alt="" />
+      <img :src="IconAdd" alt="" />
+      <img :src="IconUserFooter" alt="" />
+    </footer>
   </div>
 </template>
 
+<style >
+.lista_clientes {
+  height: 500px;
+  width: 100%;
+  max-width: 800px;
+  margin: 35px auto;
+  font-family: "itim";
+  color: #00852c;
+}
 
+header {
+  width: 100%;
+  max-width: 800px;
+  height: 135px;
+  margin: 0 auto;
+  background-color: #0d2a14;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  position: relative;
+}
 
-<style scoped>
+.pesquisa_cliente {
+  margin-top: 200px;
+  width: 300px;
+  height: 40px;
+  border-radius: 4px;
+  border: none;
+  outline: none;
+  text-align: center;
+}
+
+.painel_text_icons {
+  color: white;
+  display: flex;
+  justify-content: space-between;
+}
+
+.painel_text_icons p {
+  margin: 20px 20px;
+  font-weight: 200;
+  font-size: 20px;
+  font-style: normal;
+  font-family: "Quicksand", sans-serif;
+}
+
+.painel_data_number {
+  display: flex;
+  justify-content: space-around;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 600px;
+  color: white;
+}
+
+.ativos,
+.entradas_saidas {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-family: "itim";
+}
+
+.ativos {
+  font-size: 17px;
+}
+
+.ativos p:nth-child(1) {
+  font-size: 17px;
+}
+
+.entradas_saidas {
+  font-size: 12px;
+}
+
+.dia_atual {
+  font-family: "itim";
+  position: absolute;
+  right: 20px;
+  bottom: -30px;
+}
+
 .painel_clientesAtivos {
   width: 100%;
   max-width: 600px;
@@ -394,5 +509,32 @@ img {
 .painel_icon_text img {
   width: 40px;
   height: 28px;
+}
+
+footer {
+  background-color: #0d2a14;
+  width: 100%;
+  max-width: 800px;
+  height: 80px;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 100px;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+}
+
+footer img {
+  width: 30px;
+  height: 30px;
+}
+
+footer img:nth-child(2) {
+  width: 45px;
+  height: 45px;
 }
 </style>
