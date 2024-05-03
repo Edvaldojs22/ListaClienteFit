@@ -1,10 +1,12 @@
 <script setup>
 import axios from "axios";
-import IconFilter from "../assets/img/filter.png";
+import { onMounted, ref } from "vue";
+import { useStore } from "vuex";
 
-let mesAtual = "";
-let diaAtual = "";
-let nomePesquisado = "";
+
+let mesAtual = ref("");
+let diaAtual = ref("");
+const clientesInativos = ref([]);
 
 const obterDataHora = async () => {
   try {
@@ -12,53 +14,21 @@ const obterDataHora = async () => {
     const dataHora = new Date(resposta.data.datetime);
     const mes = dataHora.toLocaleString("default", { month: "long" });
     const dia = dataHora.getDate();
-    mesAtual = mes;
-    diaAtual = dia;
+    mesAtual.value = mes;
+    diaAtual.value = dia;
   } catch (erro) {
     console.error("Erro ao obter data e hora:", erro);
   }
 };
-
-const enviarFormulario = () => {
-  console.log(nomePesquisado);
-};
-const opcaoListas = () => {};
-
 obterDataHora();
+
 </script>
 
 <template>
   <header>
     <div class="painel_text_icons">
       <p>Clientes</p>
-      <div class="painel_icons">
-        <i class="pi pi-search"></i>
-        <div class="campo_pesquisa_cliente">
-          <input
-            class="pesquisa_cliente"
-            type="text"
-            name=""
-            id="pesquiseCliente"
-            placeholder="Pesquisa Cliente"
-            v-model="nomePesquisado"
-          />
-          <label
-            class="botaoPesquisa"
-            for="pesquiseCliente"
-            @click="enviarFormulario"
-            >Enviar</label
-          >
-        </div>
-
-        <div class="campo_pesquisa_lista">
-          <p>Clientes Ativos</p>
-          <p>Clientes Inativos</p>
-        </div>
-
-        <img @click="opcaoListas" class="img_filter" :src="IconFilter" alt="" />
-
-        <div></div>
-      </div>
+    
     </div>
     <div class="painel_data_number">
       <div class="entradas_saidas">
@@ -81,7 +51,7 @@ obterDataHora();
   </header>
 </template>
 
-<style scoped>
+<style >
 header {
   width: 100%;
   max-width: 800px;
@@ -93,57 +63,6 @@ header {
   position: relative;
 }
 
-.campo_pesquisa_cliente {
-  background-color: rgba(102, 102, 102, 0.876);
-  backdrop-filter: blur(5px);
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%);
-  top: 0;
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  height: 100vh;
-  z-index: 1;
-  font-family: "itim";
-}
-
-.campo_pesquisa_lista {
-  background-color: rgba(102, 102, 102, 0.876);
-  backdrop-filter: blur(5px);
-  position: absolute;
-  left: 50%;
-  top: 200px;
-  transform: translate(-50%);
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  width: 300px;
-  border-radius: 20px;
-  z-index: 1;
-  font-family: sans-serif;
-}
-
-.campo_pesquisa_lista p {
-  border: solid 1px #0d2a14;
-  background-color: #0d2a14;
-  border-radius: 15px;
-  width: calc(100% - 50px);
-  padding: 10px 0;
-  max-width: 400px;
-  text-align: center;
-  color: #ffffff;
-}
-
-
-
-.campo_pesquisa_cliente label {
-  margin-top: 30px;
-  padding: 4px 20px;
-  background-color: #0d2a14;
-  border-radius: 5px;
-}
 
 .pesquisa_cliente {
   margin-top: 200px;
@@ -169,23 +88,6 @@ header {
   font-family: "Quicksand", sans-serif;
 }
 
-.painel_icons {
-  margin: 15px 10px 0 0;
-}
-.painel_icons i {
-  margin-right: 20px;
-  font-size: 25px;
-}
-
-.painel_icons i,
-img {
-  cursor: pointer;
-}
-
-.img_filter {
-  width: 25px;
-  height: 25px;
-}
 
 .painel_data_number {
   display: flex;
