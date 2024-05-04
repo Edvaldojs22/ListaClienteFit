@@ -14,6 +14,7 @@ import IconFilter from "../assets/img/filter.png";
 //Codigo para obter data e Hora
 let mesAtual = ref("");
 let diaAtual = ref("");
+
 const obterDataHora = async () => {
   try {
     const resposta = await axios.get("https://worldtimeapi.org/api/ip");
@@ -31,33 +32,70 @@ obterDataHora();
 // -------------------------------->
 
 const clientesAtivos = ref([]);
-const quantidadeCliente = ref();
+let quantidadeCliente = ref();
 let clienteExibido = ref([]);
 let pocicao0 = ref(0);
 let pocicao6 = ref(6);
 let nomePesquisado = "";
 let numeroPagina = 1;
+let ativoInativo = "ativos";
 
-const clientesInativos = ref([]);
-
+//Carrega clientes ativos inicialmente
 const carregarClientes = async () => {
   try {
     const response = await axios.get("http://localhost:3000/clientes");
-    clientesAtivos.value = response.data
+  
+    clienteExibido.value = response.data
       .filter((cliente) => cliente.active)
       .slice(pocicao0.value, pocicao6.value);
-
-    clienteExibido.value = clientesAtivos.value;
     const responseQuantidade = await axios.get(
       "http://localhost:3000/clientes/quantidade"
     );
-
     quantidadeCliente.value = responseQuantidade.data.activeClients; //Quantidade clientes Ativos
   } catch (erro) {
     console.error("Erro ao carregar clientesAtivos:", erro);
   }
 };
 carregarClientes();
+
+//-------------------------------------------------->
+
+//Carrega clientes  com a paginação
+const carregarClientesPag = async () => {
+ 
+   
+  if (ativoInativo == "ativos") {
+    try {
+      const response = await axios.get("http://localhost:3000/clientes");
+      clienteExibido.value = response.data
+        .filter((cliente) => cliente.active)
+        .slice(pocicao0.value, pocicao6.value);
+    } catch (erro) {
+      console.error("Erro ao carregar clientesAtivos:", erro);
+    }
+  
+  } else if (ativoInativo == "inativos") {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/clientes/desativados"
+      );
+    
+      clienteExibido.value = response.data
+        .filter((cliente) => !cliente.active)
+        .slice(pocicao0.value, pocicao6.value);
+        quantidadeCliente.value = response.data.length;
+
+ 
+    } catch (erro) {
+      console.error("Erro ao carregar clientesAtivos:", erro);
+    }
+  }
+};
+// ------------------------------------------------------->
+
+const carregarLista = () =>{
+  carregarClientesPag()
+}
 
 onMounted(() => {
   const telaPesquisa = document.querySelector(".campo_pesquisa_cliente");
@@ -88,18 +126,23 @@ const enviarFormulario = () => {
   buscaClientePeloNome(nomePesquisado);
 };
 
-const buscaClientePeloNome = (nome) => {
-  clienteExibido.value = clienteExibido.value.filter(
-    (cliente) =>
-      cliente.name.toLowerCase().includes(nome.toLowerCase()) ||
-      cliente.phone.includes(nome)
-  );
-};
+const buscaClientePeloNome = async (nome) => {
+try{
+  const response = await axios.get("http://localhost:3000/clientes")
+  clienteExibido.value = response.data.filter((cliente) => {
+    return cliente.nome.toLowerCase().includes(nome.toLowerCase())
+  })
+  console.log('oi')
+} catch (errp) {
+console.log('Erro ao pesquisa Cliente', erro)
+}
+    
+}
 
 //Codigo responsavel por mudar a lista
 const buscaClienteInativos = async (event) => {
   const telaLista = document.querySelector(".campo_pesquisa_lista");
-  const ativoInativo = event.target.id;
+  ativoInativo = event.target.id;
   if (ativoInativo == "ativos") {
     clienteExibido.value = clientesAtivos.value;
     telaLista.style.display = "none";
@@ -108,9 +151,8 @@ const buscaClienteInativos = async (event) => {
       const response = await axios.get(
         "http://localhost:3000/clientes/desativados"
       );
-      const clientesInativos = response.data;
+      clienteExibido.value = response.data;
 
-      clienteExibido.value = clientesInativos;
       telaLista.style.display = "none";
     } catch (erro) {
       console.log("Erro ao carregar clientesAtivos:", erro);
@@ -122,18 +164,21 @@ const buscaClienteInativos = async (event) => {
 const proximaPagina = (event) => {
   const arrwId = event.target.id;
   if (arrwId === "arrowRigth") {
+   
     if (quantidadeCliente.value > pocicao0.value) {
       pocicao0.value += 6;
       pocicao6.value += 6;
       numeroPagina += 1;
-      carregarClientes();
+      carregarClientesPag();
     }
   } else if (arrwId === "arrowLeft") {
+    
     if (pocicao0.value > 0) {
+      
       pocicao0.value -= 6;
       pocicao6.value -= 6;
       numeroPagina -= 1;
-      carregarClientes();
+      carregarClientesPag();
     }
   }
 };
@@ -195,7 +240,7 @@ const proximaPagina = (event) => {
 
         <div class="campo_pesquisa_lista">
           <p @click="buscaClienteInativos" id="ativos">Clientes Ativos</p>
-          <p @click="buscaClienteInativos" id="inativos">Clientes Inativos</p>
+          <p @click="buscaClienteInativos " id="inativos">Clientes Inativos</p>
         </div>
         <div
           class="painel_img_infos"
