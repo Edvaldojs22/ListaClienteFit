@@ -14,6 +14,8 @@ import IconFilter from "../assets/img/filter.png";
 //Codigo para obter data e Hora
 let mesAtual = ref("");
 let diaAtual = ref("");
+let mesAnterior = ref("");
+let proximoMes = ref("");
 
 const obterDataHora = async () => {
   try {
@@ -23,80 +25,57 @@ const obterDataHora = async () => {
     const dia = dataHora.getDate();
     mesAtual.value = mes;
     diaAtual.value = dia;
+
+    // Obtendo o mês anterior
+    const mesAnteriorData = new Date(dataHora);
+    mesAnteriorData.setMonth(mesAnteriorData.getMonth() - 1);
+    mesAnterior = mesAnteriorData.toLocaleString("default", { month: "long" });
+
+    // Obtendo o próximo mês
+    const proximoMesData = new Date(dataHora);
+    proximoMesData.setMonth(proximoMesData.getMonth() + 1);
+    proximoMes = proximoMesData.toLocaleString("default", { month: "long" });
   } catch (erro) {
     console.error("Erro ao obter data e hora:", erro);
   }
 };
 obterDataHora();
 
-// -------------------------------->
+// ----------------------------------------------------->
 
 const clientesAtivos = ref([]);
-let quantidadeCliente = ref();
-let clienteExibido = ref([]);
-let pocicao0 = ref(0);
-let pocicao6 = ref(6);
 let nomePesquisado = "";
-let numeroPagina = 1;
 let ativoInativo = "ativos";
+let exiberCliente = ref([]);
+
+let isActive = true;
+let pagina = 1;
+let limit = 6;
+let numeroPagina = pagina;
+let next = "";
+let previous = "";
 
 //Carrega clientes ativos inicialmente
 const carregarClientes = async () => {
   try {
-    const response = await axios.get("http://localhost:3000/clientes");
-  
-    clienteExibido.value = response.data
-      .filter((cliente) => cliente.active)
-      .slice(pocicao0.value, pocicao6.value);
-    const responseQuantidade = await axios.get(
-      "http://localhost:3000/clientes/quantidade"
-    );
-    quantidadeCliente.value = responseQuantidade.data.activeClients; //Quantidade clientes Ativos
+    const response = await axios.get("http://localhost:3000/clientes", {
+      params: {
+        page: pagina,
+        limit: limit,
+        search: nomePesquisado,
+        isActive: isActive,
+      },
+    });
+    exiberCliente.value = response.data.results;
+    next = response.data.next;
+    previous = response.data.previous;
   } catch (erro) {
     console.error("Erro ao carregar clientesAtivos:", erro);
   }
 };
 carregarClientes();
 
-//-------------------------------------------------->
-
-//Carrega clientes  com a paginação
-const carregarClientesPag = async () => {
- 
-   
-  if (ativoInativo == "ativos") {
-    try {
-      const response = await axios.get("http://localhost:3000/clientes");
-      clienteExibido.value = response.data
-        .filter((cliente) => cliente.active)
-        .slice(pocicao0.value, pocicao6.value);
-    } catch (erro) {
-      console.error("Erro ao carregar clientesAtivos:", erro);
-    }
-  
-  } else if (ativoInativo == "inativos") {
-    try {
-      const response = await axios.get(
-        "http://localhost:3000/clientes/desativados"
-      );
-    
-      clienteExibido.value = response.data
-        .filter((cliente) => !cliente.active)
-        .slice(pocicao0.value, pocicao6.value);
-        quantidadeCliente.value = response.data.length;
-
- 
-    } catch (erro) {
-      console.error("Erro ao carregar clientesAtivos:", erro);
-    }
-  }
-};
-// ------------------------------------------------------->
-
-const carregarLista = () =>{
-  carregarClientesPag()
-}
-
+//Codigo ativa botões para selecionar lista
 onMounted(() => {
   const telaPesquisa = document.querySelector(".campo_pesquisa_cliente");
   const telaLista = document.querySelector(".campo_pesquisa_lista");
@@ -121,69 +100,52 @@ onMounted(() => {
     });
 });
 
+// ----------------------------------------------------------------->
+
 //Pesquia Cliente
 const enviarFormulario = () => {
   buscaClientePeloNome(nomePesquisado);
 };
 
 const buscaClientePeloNome = async (nome) => {
-try{
-  const response = await axios.get("http://localhost:3000/clientes")
-  clienteExibido.value = response.data.filter((cliente) => {
-    return cliente.nome.toLowerCase().includes(nome.toLowerCase())
-  })
-  console.log('oi')
-} catch (errp) {
-console.log('Erro ao pesquisa Cliente', erro)
-}
-    
-}
+  nomePesquisado = nome;
+  carregarClientes();
+};
+
+// -------------------------------------------------------->
 
 //Codigo responsavel por mudar a lista
-const buscaClienteInativos = async (event) => {
+const mudarLista = (event) => {
   const telaLista = document.querySelector(".campo_pesquisa_lista");
   ativoInativo = event.target.id;
   if (ativoInativo == "ativos") {
-    clienteExibido.value = clientesAtivos.value;
+    isActive = true;
+    carregarClientes();
     telaLista.style.display = "none";
   } else if (ativoInativo == "inativos") {
-    try {
-      const response = await axios.get(
-        "http://localhost:3000/clientes/desativados"
-      );
-      clienteExibido.value = response.data;
-
-      telaLista.style.display = "none";
-    } catch (erro) {
-      console.log("Erro ao carregar clientesAtivos:", erro);
-    }
+    isActive = false;
+    carregarClientes();
+    telaLista.style.display = "none";
   }
 };
+// ---------------------------------------------------------->
 
-//Proxima pagina
+//
 const proximaPagina = (event) => {
-  const arrwId = event.target.id;
-  if (arrwId === "arrowRigth") {
-   
-    if (quantidadeCliente.value > pocicao0.value) {
-      pocicao0.value += 6;
-      pocicao6.value += 6;
-      numeroPagina += 1;
-      carregarClientesPag();
-    }
-  } else if (arrwId === "arrowLeft") {
-    
-    if (pocicao0.value > 0) {
-      
-      pocicao0.value -= 6;
-      pocicao6.value -= 6;
-      numeroPagina -= 1;
-      carregarClientesPag();
-    }
+  let arrowPositin = event.target.id;
+  console.log(arrowPositin);
+  if (arrowPositin === "arrowRigth") {
+    pagina = next.page;
+    limit = next.limit;
+    numeroPagina = pagina;
+    carregarClientes();
+  } else if (arrowPositin == "arrowLeft") {
+    pagina = previous.page;
+    limit = previous.limit;
+    numeroPagina = pagina;
+    carregarClientes();
   }
 };
-
-//-------------------------------------------
 </script>
 
 
@@ -200,7 +162,6 @@ const proximaPagina = (event) => {
 
       <div class="painel_data_number">
         <div class="entradas_saidas">
-          <p>{{ mesAtual }}</p>
           <p>8</p>
           <p>Entradas</p>
         </div>
@@ -210,7 +171,6 @@ const proximaPagina = (event) => {
           <p>Ativos</p>
         </div>
         <div class="entradas_saidas">
-          <p>{{ mesAtual }}</p>
           <p>2</p>
           <p>Saidas</p>
         </div>
@@ -239,12 +199,12 @@ const proximaPagina = (event) => {
         </div>
 
         <div class="campo_pesquisa_lista">
-          <p @click="buscaClienteInativos" id="ativos">Clientes Ativos</p>
-          <p @click="buscaClienteInativos " id="inativos">Clientes Inativos</p>
+          <p @click="mudarLista" id="ativos">Clientes Ativos</p>
+          <p @click="mudarLista" id="inativos">Clientes Inativos</p>
         </div>
         <div
           class="painel_img_infos"
-          v-for="cliente in clienteExibido"
+          v-for="cliente in exiberCliente"
           :key="cliente.id"
         >
           <img class="img_user" :src="IconUser" alt="" />
@@ -258,6 +218,7 @@ const proximaPagina = (event) => {
         <div class="painel_paginacao">
           <div class="painel_array_pag">
             <img
+              v-if="previous"
               id="arrowLeft"
               @click="proximaPagina"
               class="arrowLeft"
@@ -268,6 +229,7 @@ const proximaPagina = (event) => {
             <div class="pag">{{ numeroPagina }}</div>
 
             <img
+              v-if="next"
               id="arrowRigth"
               @click="proximaPagina"
               class="arrowRigth"
@@ -342,9 +304,11 @@ header {
   display: flex;
   justify-content: space-around;
   margin: 0 auto;
+  height: 30px;
   width: 100%;
   max-width: 600px;
   color: white;
+  margin-top: 20px;
 }
 
 .ativos,
@@ -352,21 +316,26 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: end;
   gap: 2px;
   font-family: "itim";
 }
 
 .ativos {
   font-size: 17px;
+ 
 }
 
 .ativos p:nth-child(1) {
-  font-size: 17px;
+  text-transform: uppercase;
+}
+.ativos p:nth-child(2) {
+ font-size: 22px;
 }
 
+
 .entradas_saidas {
-  font-size: 12px;
+  font-size: 17px;
 }
 
 .dia_atual {
