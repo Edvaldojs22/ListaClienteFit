@@ -46,6 +46,7 @@ const clientesAtivos = ref([]);
 let nomePesquisado = "";
 let ativoInativo = "ativos";
 let exiberCliente = ref([]);
+let quantidadesAtivo = ''
 
 let isActive = true;
 let pagina = 1;
@@ -68,6 +69,7 @@ const carregarClientes = async () => {
     exiberCliente.value = response.data.results;
     next = response.data.next;
     previous = response.data.previous;
+    quantidadesAtivo= response.data.results.length;
   } catch (erro) {
     console.error("Erro ao carregar clientesAtivos:", erro);
   }
@@ -132,7 +134,6 @@ const mudarLista = (event) => {
 // Proxima pagina
 const proximaPagina = (event) => {
   let arrowPositin = event.target.id;
-  console.log(arrowPositin);
   if (arrowPositin === "arrowRigth") {
     pagina = next.page;
     limit = next.limit;
@@ -150,8 +151,15 @@ const proximaPagina = (event) => {
 const route = useRouter();
 
 const handleAdd = () => {
- route.push({ name: "AddCliente" });
- console.log(route);
+  route.push({ name: "AddCliente" });
+  console.log(route);
+};
+
+const exibirOpcoes = (clienteId, clienteName) => {
+  const nomeCliente = document.querySelector("#nomeCliente");
+  nomeCliente.innerHTML = clienteName;
+  const painelOpcoes = document.querySelector(".campo_cliente_opcoes");
+  painelOpcoes.style.display = "flex";
 };
 </script>
 
@@ -174,7 +182,7 @@ const handleAdd = () => {
         </div>
         <div class="ativos">
           <p>{{ mesAtual }}</p>
-          <p>50</p>
+          <p>{{quantidadesAtivo}}</p>
           <p>Ativos</p>
         </div>
         <div class="entradas_saidas">
@@ -204,12 +212,24 @@ const handleAdd = () => {
             >Enviar</label
           >
         </div>
-
+        <!-- Escolhe tipo lista  -->
         <div class="campo_pesquisa_lista">
           <p @click="mudarLista" id="ativos">Clientes Ativos</p>
           <p @click="mudarLista" id="inativos">Clientes Inativos</p>
         </div>
+        <!-- ---------------------- -->
+
+        <!--Opções cliente -->
+        <div class="campo_cliente_opcoes">
+          <img :src="IconUser" alt="" />
+          <p id="nomeCliente">edvaldo</p>
+           <p>Comfirmar pagamento</p>
+          <p @click="handleAdd">Cancelar Cliente</p>
+          <p @click="handleAdd">Editar</p>
+        </div>
+        <!-- ---------------------- -->
         <div
+          @click="exibirOpcoes(cliente.id, cliente.name)"
           class="painel_img_infos"
           v-for="cliente in exiberCliente"
           :key="cliente.id"
@@ -252,11 +272,11 @@ const handleAdd = () => {
         </div>
       </div>
     </main>
-    <!-- -------------------------------------------------------------- -->
+    <!-- ---------------------------------------------------------------->
 
     <footer>
       <img :src="IconZap" alt="" />
-      <img @click="handleAdd"  :src="IconAdd" alt="" />
+      <img @click="handleAdd" :src="IconAdd" alt="" />
       <img :src="IconUserFooter" alt="" />
     </footer>
   </div>
@@ -330,16 +350,14 @@ header {
 
 .ativos {
   font-size: 17px;
- 
 }
 
 .ativos p:nth-child(1) {
   text-transform: uppercase;
 }
 .ativos p:nth-child(2) {
- font-size: 22px;
+  font-size: 22px;
 }
-
 
 .entradas_saidas {
   font-size: 17px;
@@ -400,8 +418,9 @@ img {
   font-family: "itim";
 }
 
-.campo_pesquisa_lista {
-  background-color: rgba(102, 102, 102, 0.876);
+.campo_pesquisa_lista,
+.campo_cliente_opcoes {
+  background-color: rgba(102, 102, 102, 0.608);
   backdrop-filter: blur(5px);
   position: absolute;
   left: 50%;
@@ -419,7 +438,6 @@ img {
 }
 
 .campo_pesquisa_lista p {
-  border: solid 1px #0d2a14;
   background-color: #0d2a14;
   border-radius: 15px;
   width: calc(100% - 50px);
@@ -428,6 +446,40 @@ img {
   text-align: center;
   color: #ffffff;
   cursor: pointer;
+    font-family: 'itim';
+}
+
+.campo_cliente_opcoes {
+  height: 250px;
+ 
+}
+
+.campo_cliente_opcoes p {
+  width: 240px;
+  height: 35px;
+  padding: 10px 0;
+  border: solid 1px;
+  text-align: center;
+  background-color: #0d2a14;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: 'itim';
+}
+
+#nomeCliente {
+  width: 100px;
+  background-color: transparent;
+  text-transform: uppercase;
+  color: #0d2a14;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.campo_cliente_opcoes img {
+  width: 60px;
+  height: 60px;
 }
 
 .campo_pesquisa_cliente label {
@@ -446,6 +498,8 @@ img {
 .painel_img_infos {
   position: relative;
   border-bottom: solid 2px #00852c;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .painel_img_infos div {
@@ -559,7 +613,7 @@ footer img:nth-child(2) {
   height: 45px;
 }
 
-footer img:hover{
+footer img:hover {
   transform: scale(1.1);
 }
 </style>

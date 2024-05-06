@@ -60,14 +60,16 @@ const handleLogin = () => {
 <style>
 .painel_add {
     width: calc(100% - 50px);
+    max-width: 350px;
     height: calc(100% - 30px);
+    max-height: 500px;
     background-color: #11991321;
     border-radius: 10px;
     backdrop-filter: blur(20px);
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 40px;
+    gap: 20px;
     padding: 20px;
 }
 
