@@ -9,7 +9,6 @@ const handleLogin = () => {
   // const password = document.getElementById('password').value;
 
   route.push({ name: "Home" });
-  console.log(route);
 };
 // export default {
 //   name: "Login",
@@ -43,7 +42,7 @@ const handleLogin = () => {
   </div>
 </template>
 
-<style scoped>
+<style >
 .painel_login {
   width: 100%;
   max-width: 700px;
@@ -55,7 +54,6 @@ const handleLogin = () => {
   justify-content: center;
   align-items: center;
   margin-top: 100px;
-  border-radius: 20px;
 }
 
 .cor_top {
@@ -95,6 +93,7 @@ const handleLogin = () => {
   justify-content: center;
   gap: 30px;
 }
+
 .painel_logoText {
   display: flex;
   flex-direction: column;
@@ -131,8 +130,10 @@ const handleLogin = () => {
 }
 
 #botao_login {
-  padding: 6px 25px;
-  font-size: 25px;
+  width: calc(100% - 30px);
+  height: 40px;
+  margin: 0 auto;
+  font-size: 19px;
   border: none;
   border-radius: 10px;
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
@@ -141,6 +142,7 @@ const handleLogin = () => {
   color: white;
   margin-top: 20px;
   cursor: pointer;
+
 }
 
 #botao_login:hover {

@@ -1,15 +1,14 @@
 <script setup>
 import axios from "axios";
 import { onMounted, ref } from "vue";
-import { useStore } from "vuex";
 import IconZap from "../assets/img/zap.png";
 import IconAdd from "../assets/img/add.png";
 import IconUserFooter from "../assets/img/userFooter .png";
-import { defineProps } from "vue";
 import IconUser from "../assets/img/user.png";
 import IconMuscle from "../assets/img/muscle.png";
 import IconArrow from "../assets/img/arrow.png";
 import IconFilter from "../assets/img/filter.png";
+import { useRouter } from "vue-router";
 
 //Codigo para obter data e Hora
 let mesAtual = ref("");
@@ -130,7 +129,7 @@ const mudarLista = (event) => {
 };
 // ---------------------------------------------------------->
 
-//
+// Proxima pagina
 const proximaPagina = (event) => {
   let arrowPositin = event.target.id;
   console.log(arrowPositin);
@@ -145,6 +144,14 @@ const proximaPagina = (event) => {
     numeroPagina = pagina;
     carregarClientes();
   }
+};
+
+//Route para pagina Add
+const route = useRouter();
+
+const handleAdd = () => {
+ route.push({ name: "AddCliente" });
+ console.log(route);
 };
 </script>
 
@@ -249,7 +256,7 @@ const proximaPagina = (event) => {
 
     <footer>
       <img :src="IconZap" alt="" />
-      <img :src="IconAdd" alt="" />
+      <img @click="handleAdd"  :src="IconAdd" alt="" />
       <img :src="IconUserFooter" alt="" />
     </footer>
   </div>
@@ -550,5 +557,9 @@ footer img {
 footer img:nth-child(2) {
   width: 45px;
   height: 45px;
+}
+
+footer img:hover{
+  transform: scale(1.1);
 }
 </style>
