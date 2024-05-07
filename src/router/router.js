@@ -17,7 +17,7 @@ const routes = [
         component: Login
     },
     {
-        path: '/add',
+        path: '/add/:id',
         name: 'AddCliente',
         component: AddCliente
     }

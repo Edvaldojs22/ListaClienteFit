@@ -1,5 +1,5 @@
 <script setup>
-import axios from "axios";
+import axios, { Axios } from "axios";
 import { onMounted, ref } from "vue";
 import IconZap from "../assets/img/zap.png";
 import IconAdd from "../assets/img/add.png";
@@ -15,6 +15,7 @@ let mesAtual = ref("");
 let diaAtual = ref("");
 let mesAnterior = ref("");
 let proximoMes = ref("");
+let clienteId = ref("")
 
 const obterDataHora = async () => {
   try {
@@ -47,6 +48,7 @@ let nomePesquisado = "";
 let ativoInativo = "ativos";
 let exiberCliente = ref([]);
 let quantidadesAtivo = "";
+let clienteNumber = ref();
 
 let isActive = true;
 let pagina = 1;
@@ -80,7 +82,6 @@ carregarClientes();
 onMounted(() => {
   const telaPesquisa = document.querySelector(".campo_pesquisa_cliente");
   const telaLista = document.querySelector(".campo_pesquisa_lista");
-
   //Tela Pesquisa Clientes
   const lupa = document
     .querySelector(".pi-search")
@@ -154,12 +155,30 @@ const handleAdd = () => {
   route.push({ name: "AddCliente" });
 };
 
-const exibirOpcoes = (clienteId, clienteName) => {
+
+const clienteEditar = (clienteId) =>{
+  
+}
+
+const exibirOpcoes = async (clienteId,clienteName) => {
   const nomeCliente = document.querySelector("#nomeCliente");
   nomeCliente.innerHTML = clienteName;
   const painelOpcoes = document.querySelector(".campo_cliente_opcoes");
   painelOpcoes.style.display = "flex";
+
+try{
+  await route.push({ name: 'AddCliente', params: { id: clienteId } });
+ 
+}catch{
+console.error('Erro ao exibir opções:', error);
+}
+
+clienteEditar(clienteNumber);
+
 };
+
+
+
 </script>
 
 

@@ -5,11 +5,11 @@ import { useRouter } from "vue-router";
 const route = useRouter();
 
 const handleLogin = () => {
-
-
     route.push({ name: "Home" });
     console.log(route);
 };
+
+console.log(route.params.id)
 
 </script>
 
@@ -51,7 +51,7 @@ const handleLogin = () => {
 
 
             <button type="submit" id="botao_add">
-                Salvar
+                Editar
             </button>
         </form>
     </div>
