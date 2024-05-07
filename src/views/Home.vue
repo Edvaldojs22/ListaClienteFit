@@ -46,7 +46,7 @@ const clientesAtivos = ref([]);
 let nomePesquisado = "";
 let ativoInativo = "ativos";
 let exiberCliente = ref([]);
-let quantidadesAtivo = ''
+let quantidadesAtivo = "";
 
 let isActive = true;
 let pagina = 1;
@@ -69,7 +69,7 @@ const carregarClientes = async () => {
     exiberCliente.value = response.data.results;
     next = response.data.next;
     previous = response.data.previous;
-    quantidadesAtivo= response.data.results.length;
+    quantidadesAtivo = response.data.results.length;
   } catch (erro) {
     console.error("Erro ao carregar clientesAtivos:", erro);
   }
@@ -152,7 +152,6 @@ const route = useRouter();
 
 const handleAdd = () => {
   route.push({ name: "AddCliente" });
-  console.log(route);
 };
 
 const exibirOpcoes = (clienteId, clienteName) => {
@@ -182,7 +181,7 @@ const exibirOpcoes = (clienteId, clienteName) => {
         </div>
         <div class="ativos">
           <p>{{ mesAtual }}</p>
-          <p>{{quantidadesAtivo}}</p>
+          <p>{{ quantidadesAtivo }}</p>
           <p>Ativos</p>
         </div>
         <div class="entradas_saidas">
@@ -221,9 +220,8 @@ const exibirOpcoes = (clienteId, clienteName) => {
 
         <!--Opções cliente -->
         <div class="campo_cliente_opcoes">
-          <img :src="IconUser" alt="" />
           <p id="nomeCliente">edvaldo</p>
-           <p>Comfirmar pagamento</p>
+          <p>Comfirmar pagamento</p>
           <p @click="handleAdd">Cancelar Cliente</p>
           <p @click="handleAdd">Editar</p>
         </div>
@@ -239,7 +237,11 @@ const exibirOpcoes = (clienteId, clienteName) => {
             <p>{{ cliente.name }}</p>
             <p>{{ cliente.phone }}</p>
           </div>
-          <p class="vencimento">{{ cliente.dueDay }}</p>
+          <div>
+            <p></p>
+             <p class="vencimento">{{ cliente.dueDay }}</p>
+          </div>
+         
         </div>
 
         <div class="painel_paginacao">
@@ -429,7 +431,8 @@ img {
   display: none;
   flex-direction: column;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
+  gap: 20px;
   width: 300px;
   height: 120px;
   border-radius: 20px;
@@ -438,7 +441,6 @@ img {
 }
 
 .campo_pesquisa_lista p {
-  background-color: #0d2a14;
   border-radius: 15px;
   width: calc(100% - 50px);
   padding: 10px 0;
@@ -446,7 +448,14 @@ img {
   text-align: center;
   color: #ffffff;
   cursor: pointer;
-    font-family: 'itim';
+  font-family: "itim";
+}
+
+.campo_pesquisa_lista p:nth-child(1){
+  background-color: #028500;
+}
+.campo_pesquisa_lista p:nth-child(2){
+  background-color: #851000;
 }
 
 .campo_cliente_opcoes {
@@ -457,29 +466,33 @@ img {
 .campo_cliente_opcoes p {
   width: 240px;
   height: 35px;
-  padding: 10px 0;
+  padding: 7px 0;
   border: solid 1px;
   text-align: center;
-  background-color: #0d2a14;
   color: white;
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  font-family: 'itim';
+  font-family: "itim";
+}
+
+.campo_cliente_opcoes p:nth-child(2) {
+  background-color: #028500;
+}
+
+.campo_cliente_opcoes p:nth-child(3) {
+  background-color: #851000;
+}
+.campo_cliente_opcoes p:nth-child(4) {
+  background-color: #005085;
 }
 
 #nomeCliente {
-  width: 100px;
   background-color: transparent;
   text-transform: uppercase;
   color: #0d2a14;
-  font-size: 20px;
+  font-size: 25px;
   font-weight: 600;
-}
-
-.campo_cliente_opcoes img {
-  width: 60px;
-  height: 60px;
 }
 
 .campo_pesquisa_cliente label {
