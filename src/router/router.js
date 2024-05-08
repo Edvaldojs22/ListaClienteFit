@@ -2,7 +2,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../views/Home.vue';
 import Login from '../views/Login.vue';
-import AddCliente from '../views/AddCliente.vue';
+import EditCliente from '../views/EditCliente.vue';
 
 
 const routes = [
@@ -17,9 +17,9 @@ const routes = [
         component: Login
     },
     {
-        path: '/add/:id',
-        name: 'AddCliente',
-        component: AddCliente
+        path: '/editar/:id',
+        name: 'editarCliente',
+        component: EditCliente
     }
  
 ];

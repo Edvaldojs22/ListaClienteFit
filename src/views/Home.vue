@@ -151,31 +151,28 @@ const proximaPagina = (event) => {
 //Route para pagina Add
 const route = useRouter();
 
-const handleAdd = () => {
-  route.push({ name: "AddCliente" });
-};
+// const handleAdd = () => {
+//   route.push({ name: "AddCliente" });
+// };
 
 
-const clienteEditar = (clienteId) =>{
-  
-}
 
-const exibirOpcoes = async (clienteId,clienteName) => {
+let cliente = '';
+const exibirOpcoes = (clienteId,clienteName) => {
   const nomeCliente = document.querySelector("#nomeCliente");
   nomeCliente.innerHTML = clienteName;
   const painelOpcoes = document.querySelector(".campo_cliente_opcoes");
   painelOpcoes.style.display = "flex";
-
-try{
-  await route.push({ name: 'AddCliente', params: { id: clienteId } });
- 
-}catch{
-console.error('Erro ao exibir opções:', error);
-}
-
-clienteEditar(clienteNumber);
+  cliente = clienteId;
 
 };
+
+onMounted(() =>{
+const botaoEditar = document.querySelector('#editar').addEventListener("click",() =>{
+route.push({name:"editarCliente", params:{id:cliente}});
+});
+ 
+})
 
 
 
@@ -242,7 +239,7 @@ clienteEditar(clienteNumber);
           <p id="nomeCliente">edvaldo</p>
           <p>Comfirmar pagamento</p>
           <p @click="handleAdd">Cancelar Cliente</p>
-          <p @click="handleAdd">Editar</p>
+          <p id="editar" @click="handleAdd">Editar</p>
         </div>
         <!-- ---------------------- -->
         <div
