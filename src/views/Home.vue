@@ -15,7 +15,7 @@ let mesAtual = ref("");
 let diaAtual = ref("");
 let mesAnterior = ref("");
 let proximoMes = ref("");
-let clienteId = ref("")
+let clienteId = ref("");
 
 const obterDataHora = async () => {
   try {
@@ -79,9 +79,10 @@ const carregarClientes = async () => {
 carregarClientes();
 
 //Codigo ativa botões para selecionar lista
+let filter;
 onMounted(() => {
   const telaPesquisa = document.querySelector(".campo_pesquisa_cliente");
-  const telaLista = document.querySelector(".campo_pesquisa_lista");
+   telaLista = document.querySelector(".campo_pesquisa_lista");
   //Tela Pesquisa Clientes
   const lupa = document
     .querySelector(".pi-search")
@@ -93,13 +94,10 @@ onMounted(() => {
     .addEventListener("click", () => {
       telaPesquisa.style.display = "none";
     });
-
-  //Tela Pesquisa Lista Clientes
-  const filter = document
-    .querySelector(".img_filter")
-    .addEventListener("click", () => {
-      telaLista.style.display = "flex";
-    });
+   filter = document .querySelector(".img_filter");
+    filter.addEventListener("click", ()=>{
+      telaLista.style.display = "flex"
+    })
 });
 
 // ----------------------------------------------------------------->
@@ -117,14 +115,22 @@ const buscaClientePeloNome = async (nome) => {
 // -------------------------------------------------------->
 
 //Codigo responsavel por mudar a lista
+let valorP_tipoLista;
+let telaLista;
+onMounted(() => {
+  valorP_tipoLista = document.querySelector(".tipoLista");
+});
+
 const mudarLista = (event) => {
-  const telaLista = document.querySelector(".campo_pesquisa_lista");
+   telaLista = document.querySelector(".campo_pesquisa_lista");
   ativoInativo = event.target.id;
   if (ativoInativo == "ativos") {
+    valorP_tipoLista.innerHTML = "Clientes Ativos";
     isActive = true;
     carregarClientes();
     telaLista.style.display = "none";
   } else if (ativoInativo == "inativos") {
+    valorP_tipoLista.innerHTML = "Clientes Inativos";
     isActive = false;
     carregarClientes();
     telaLista.style.display = "none";
@@ -148,31 +154,62 @@ const proximaPagina = (event) => {
   }
 };
 
+
+let valorP_botaoValor;
+let painelOpcoes;
+onMounted(() => {
+  valorP_botaoValor = document.querySelector(".valorP");
+});
+
+let cliente = "";
+const exibirOpcoes = (clienteId, clienteName, clienteEstado) => {
+  if (clienteEstado) {
+    valorP_botaoValor.innerHTML = "Cancelar Cliente";
+  } else {
+    valorP_botaoValor.style.backgroundColor = "#028500";
+    valorP_botaoValor.innerHTML = "Confirma Cliente";
+  }
+  const nomeCliente = document.querySelector("#nomeCliente");
+  nomeCliente.innerHTML = clienteName;
+  painelOpcoes = document.querySelector(".campo_cliente_opcoes");
+  painelOpcoes.style.display = "flex";
+  cliente = clienteId;
+};
+
+onMounted(() => {
+  const botaoEditar = document
+    .querySelector("#editar")
+    .addEventListener("click", () => {
+      route.push({ name: "editarCliente", params: { id: cliente } });
+    });
+});
+
+const fechaConteudos = () =>{
+  telaLista.style.display = "none"
+  painelOpcoes.style.display = "none"
+}
+
+
+const cancelarCliente = async () => {
+  try {
+    const response = await axios.get(`http://localhost:3000/clientes/${cliente}`);
+   
+    const atualizar = { ...response.data, active: !response.data.active };
+    await axios.put(`http://localhost:3000/clientes/${cliente}`, atualizar);
+    carregarClientes();
+    
+  } catch (erro) {
+    console.log("Erro ao cancelar Cliente", erro);
+  }
+}
+
 //Route para pagina Add
 const route = useRouter();
 
-// const handleAdd = () => {
-//   route.push({ name: "AddCliente" });
-// };
-
-
-
-let cliente = '';
-const exibirOpcoes = (clienteId,clienteName) => {
-  const nomeCliente = document.querySelector("#nomeCliente");
-  nomeCliente.innerHTML = clienteName;
-  const painelOpcoes = document.querySelector(".campo_cliente_opcoes");
-  painelOpcoes.style.display = "flex";
-  cliente = clienteId;
+const handleAdd = () => {
+  route.push({ name: "novoCliente" });
 
 };
-
-onMounted(() =>{
-const botaoEditar = document.querySelector('#editar').addEventListener("click",() =>{
-route.push({name:"editarCliente", params:{id:cliente}});
-});
- 
-})
 
 
 
@@ -187,7 +224,7 @@ route.push({name:"editarCliente", params:{id:cliente}});
       </div>
       <div class="painel_icons">
         <i class="pi pi-search"></i>
-        <img @click="opcaoListas" class="img_filter" :src="IconFilter" alt="" />
+        <img class="img_filter" :src="IconFilter" alt="" />
       </div>
 
       <div class="painel_data_number">
@@ -205,6 +242,7 @@ route.push({name:"editarCliente", params:{id:cliente}});
           <p>Saidas</p>
         </div>
       </div>
+      <p class="tipoLista">Clientes Ativos</p>
       <p class="dia_atual">Dia: {{ diaAtual }}</p>
     </header>
 
@@ -231,6 +269,7 @@ route.push({name:"editarCliente", params:{id:cliente}});
         <div class="campo_pesquisa_lista">
           <p @click="mudarLista" id="ativos">Clientes Ativos</p>
           <p @click="mudarLista" id="inativos">Clientes Inativos</p>
+          <i @click="fechaConteudos" class="pi pi-times"></i>
         </div>
         <!-- ---------------------- -->
 
@@ -238,12 +277,13 @@ route.push({name:"editarCliente", params:{id:cliente}});
         <div class="campo_cliente_opcoes">
           <p id="nomeCliente">edvaldo</p>
           <p>Comfirmar pagamento</p>
-          <p @click="handleAdd">Cancelar Cliente</p>
+          <p  @click="cancelarCliente" class="valorP"></p>
           <p id="editar" @click="handleAdd">Editar</p>
+          <i @click="fechaConteudos" class="pi pi-times"></i>
         </div>
         <!-- ---------------------- -->
         <div
-          @click="exibirOpcoes(cliente.id, cliente.name)"
+          @click="exibirOpcoes(cliente.id, cliente.name, cliente.active)"
           class="painel_img_infos"
           v-for="cliente in exiberCliente"
           :key="cliente.id"
@@ -255,9 +295,8 @@ route.push({name:"editarCliente", params:{id:cliente}});
           </div>
           <div>
             <p></p>
-             <p class="vencimento">{{ cliente.dueDay }}</p>
+            <p class="vencimento">{{ cliente.dueDay }}</p>
           </div>
-         
         </div>
 
         <div class="painel_paginacao">
@@ -301,6 +340,17 @@ route.push({name:"editarCliente", params:{id:cliente}});
 </template>
 
 <style >
+@import "primeicons/primeicons.css";
+.pi-times {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 20px;
+  font-weight: 1000;
+  color: #0d2a14;
+  cursor: pointer;
+}
+
 .lista_clientes {
   height: 500px;
   width: 100%;
@@ -380,12 +430,18 @@ header {
 .entradas_saidas {
   font-size: 17px;
 }
-
+.tipoLista {
+  font-family: "itim";
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+  bottom: -25px;
+}
 .dia_atual {
   font-family: "itim";
   position: absolute;
   right: 20px;
-  bottom: -30px;
+  bottom: -25px;
 }
 
 .painel_clientesAtivos {
@@ -450,7 +506,7 @@ img {
   justify-content: center;
   gap: 20px;
   width: 300px;
-  height: 120px;
+  height: 200px;
   border-radius: 20px;
   z-index: 1;
   font-family: sans-serif;
@@ -467,16 +523,15 @@ img {
   font-family: "itim";
 }
 
-.campo_pesquisa_lista p:nth-child(1){
+.campo_pesquisa_lista p:nth-child(1) {
   background-color: #028500;
 }
-.campo_pesquisa_lista p:nth-child(2){
+.campo_pesquisa_lista p:nth-child(2) {
   background-color: #851000;
 }
 
 .campo_cliente_opcoes {
   height: 250px;
- 
 }
 
 .campo_cliente_opcoes p {

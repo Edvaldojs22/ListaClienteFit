@@ -8,7 +8,7 @@ const handleLogin = () => {
   // const username = document.getElementById('username').value;
   // const password = document.getElementById('password').value;
 
-  route.push({ name: "Home" });
+  route.push({ name: "home" });
 };
 // export default {
 //   name: "Login",

@@ -4,9 +4,7 @@ import { useRouter } from "vue-router";
 import { onMounted, ref } from "vue";
 
 const route = useRouter();
-const handleLogin = () => {
-    route.push({ name: "Home" });
-};
+
 
 const getIdFromPath = () => {
     const path = route.currentRoute.value.fullPath;
@@ -64,7 +62,7 @@ const editarCliente = async () => {
 
     if (response.ok) {
         // Tratamento de sucesso
-        route.push({ name: 'Home' });
+        route.push({ name: 'home' });
         console.log('Sucesso')
     } else {
         // Tratamento de erro
@@ -76,9 +74,7 @@ const editarCliente = async () => {
 
 </script>
 
-<script>
 
-</script>
 
 
 <template>
