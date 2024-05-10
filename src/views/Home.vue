@@ -18,7 +18,7 @@ let mesAnterior = ref("");
 let proximoMes = ref("");
 let clienteId = ref("");
 
-const obterDataHora = async () => {
+ const obterDataHora = async () => {
   try {
     const resposta = await axios.get("https://worldtimeapi.org/api/ip");
     const dataHora = new Date(resposta.data.datetime);

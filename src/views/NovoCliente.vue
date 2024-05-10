@@ -3,8 +3,35 @@ import Logo from "../assets/img/imgLogo.png";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
 import api from "../api/api.js";
+import axios from "axios";
+
+let dataAtual = ref('');
+
+const obterDataHora = async () => {
+  try {
+    const resposta = await axios.get("https://worldtimeapi.org/api/ip");
+    const dataHora = new Date(resposta.data.datetime);
+    dataAtual.value = dataHora.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+   
+   cliente.value.enrollmentDate = dataAtual.value
+
+  } catch (erro) {
+    console.error("Erro ao obter data e hora:", erro);
+  }
+};
+
+obterDataHora();
+
 
 const route = useRouter();
+
+const voltar = () =>{
+  route.push({name:"home"})
+}
 
 const cliente = ref({
   name: "",
@@ -53,29 +80,26 @@ const adicionarCliente = async () => {
 
       <div class="caixa_ipuntAdd">
         <p>Telefone:</p>
-        <input v-model="cliente.phone" id="password" type="text" />
+        <input v-model="cliente.phone" id="phone" type="text" />
       </div>
 
       <div class="caixa_ipuntAdd">
         <p>Data Nascimento:</p>
-        <input v-model="cliente.birthdate" id="password" type="text" />
+        <input v-model="cliente.birthdate" id="dataNascimenti" type="text" />
       </div>
 
       <div class="caixa_ipuntAdd">
         <p>Data Entrada:</p>
-        <input v-model="cliente.enrollmentDate" id="password" type="text" />
+        <input v-model="cliente.enrollmentDate" id="dataEntrada" type="text" />
       </div>
 
       <div class="caixa_ipuntAdd">
         <p>Vencimento:</p>
-        <input v-model="cliente.dueDay" id="password" type="text" />
+        <input v-model="cliente.dueDay" id="vencimento" type="text" />
       </div>
-      <div class="caixa_ipuntAdd">
-        <p>Ativo:</p>
-        <input v-model="cliente.active" id="password" type="text" />
-      </div>
-
+      
       <button @click="handleHome" type="submit" id="botao_add">Salvar</button>
+       <i @click="voltar" class="pi pi-times"></i>
     </form>
   </div>
 </template>

@@ -5,6 +5,9 @@ import { onMounted, ref } from "vue";
 import api from "../api/api.js";
 
 const route = useRouter();
+const voltar = () =>{
+  route.push({name:"home"})
+}
 
 const getIdFromPath = () => {
   const path = route.currentRoute.value.fullPath;
@@ -54,10 +57,9 @@ const editarCliente = async () => {
     console.error("Erro ao editar o cliente", error);
   }
 };
+
+
 </script>
-
-
-
 
 <template>
   <div class="painel_login">
@@ -93,14 +95,13 @@ const editarCliente = async () => {
         <p>Vencimento:</p>
         <input v-model="cliente.dueDay" id="password" type="text" />
       </div>
-      <div class="caixa_ipuntAdd">
-        <p>Ativo:</p>
-        <input v-model="cliente.active" id="password" type="text" />
-      </div>
-
+  
       <button type="submit" id="botao_add">Editar</button>
+       <i @click="voltar" class="pi pi-times"></i>
     </form>
+     
   </div>
+  
 </template>
 
 <style>
