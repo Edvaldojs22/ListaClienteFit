@@ -1,18 +1,33 @@
 <script setup>
 import Logo from "../assets/img/imgLogo.png";
 import { useRouter } from "vue-router";
+import axios from "axios";
+import { ref } from "vue";
+import api from "../api/api";
 
 const route = useRouter();
+const username = ref('');
+const password = ref('');
 
-const handleLogin = () => {
-  // const username = document.getElementById('username').value;
-  // const password = document.getElementById('password').value;
-
-  route.push({ name: "home" });
+const handleLogin = async () => {
+  try {
+    // Enviar nome de usuário e senha para o servidor
+    const response = await api.post('/auth/login', {
+      username: username.value,
+      password: password.value
+    });
+    // Se o login for bem-sucedido, armazenar o token e redirecionar
+    if (response.data.token) {
+      localStorage.setItem('token', response.data.token);
+      route.push({ name: 'home' });
+    } else {
+      // Trate o caso de falha no login
+      console.error('Falha no login');
+    }
+  } catch (error) {
+    console.error('Erro durante o login:', error.response?.data || error.message);
+  }
 };
-// export default {
-//   name: "Login",
-// };
 </script>
 
 <template>
@@ -27,12 +42,12 @@ const handleLogin = () => {
 
       <div class="caixa_ipunt">
         <p>Nome:</p>
-        <input id="username" type="text" />
+        <input v-model="username" id="username" type="text" />
       </div>
 
       <div class="caixa_ipunt">
         <p>Senha:</p>
-        <input id="password" type="password" />
+        <input  v-model="password" id="password" type="password" />
       </div>
 
       <button @click.prevent="handleLogin" type="submit" id="botao_login">

@@ -9,6 +9,7 @@ import IconMuscle from "../assets/img/muscle.png";
 import IconArrow from "../assets/img/arrow.png";
 import IconFilter from "../assets/img/filter.png";
 import { useRouter } from "vue-router";
+import api from "../api/api.js";
 
 //Codigo para obter data e Hora
 let mesAtual = ref("");
@@ -60,7 +61,7 @@ let previous = "";
 //Carrega clientes ativos inicialmente
 const carregarClientes = async () => {
   try {
-    const response = await axios.get("http://localhost:3000/clientes", {
+    const response = await api.get("/clientes", {
       params: {
         page: pagina,
         limit: limit,
@@ -192,10 +193,10 @@ const fechaConteudos = () =>{
 
 const cancelarCliente = async () => {
   try {
-    const response = await axios.get(`http://localhost:3000/clientes/${cliente}`);
+    const response = await api.get(`/clientes/${cliente}`);
    
     const atualizar = { ...response.data, active: !response.data.active };
-    await axios.put(`http://localhost:3000/clientes/${cliente}`, atualizar);
+    await api.put(`/clientes/${cliente}`, atualizar);
     carregarClientes();
     
   } catch (erro) {
