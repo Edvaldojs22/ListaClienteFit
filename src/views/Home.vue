@@ -18,7 +18,7 @@ let mesAnterior = ref("");
 let proximoMes = ref("");
 let clienteId = ref("");
 
- const obterDataHora = async () => {
+const obterDataHora = async () => {
   try {
     const resposta = await axios.get("https://worldtimeapi.org/api/ip");
     const dataHora = new Date(resposta.data.datetime);
@@ -83,7 +83,7 @@ carregarClientes();
 let filter;
 onMounted(() => {
   const telaPesquisa = document.querySelector(".campo_pesquisa_cliente");
-   telaLista = document.querySelector(".campo_pesquisa_lista");
+  telaLista = document.querySelector(".campo_pesquisa_lista");
   //Tela Pesquisa Clientes
   const lupa = document
     .querySelector(".pi-search")
@@ -95,10 +95,10 @@ onMounted(() => {
     .addEventListener("click", () => {
       telaPesquisa.style.display = "none";
     });
-   filter = document .querySelector(".img_filter");
-    filter.addEventListener("click", ()=>{
-      telaLista.style.display = "flex"
-    })
+  filter = document.querySelector(".img_filter");
+  filter.addEventListener("click", () => {
+    telaLista.style.display = "flex";
+  });
 });
 
 // ----------------------------------------------------------------->
@@ -123,7 +123,7 @@ onMounted(() => {
 });
 
 const mudarLista = (event) => {
-   telaLista = document.querySelector(".campo_pesquisa_lista");
+  telaLista = document.querySelector(".campo_pesquisa_lista");
   ativoInativo = event.target.id;
   if (ativoInativo == "ativos") {
     valorP_tipoLista.innerHTML = "Clientes Ativos";
@@ -155,7 +155,6 @@ const proximaPagina = (event) => {
   }
 };
 
-
 let valorP_botaoValor;
 let painelOpcoes;
 onMounted(() => {
@@ -163,13 +162,16 @@ onMounted(() => {
 });
 
 let cliente = "";
-const exibirOpcoes = (clienteId, clienteName, clienteEstado) => {
+let numeroCliente = ref()
+const exibirOpcoes = (clienteId, clienteName, clienteEstado, clienteNumero) => {
   if (clienteEstado) {
     valorP_botaoValor.innerHTML = "Cancelar Cliente";
+     valorP_botaoValor.style.backgroundColor = "#851000";
   } else {
     valorP_botaoValor.style.backgroundColor = "#028500";
     valorP_botaoValor.innerHTML = "Confirma Cliente";
   }
+  numeroCliente.value = clienteNumero;
   const nomeCliente = document.querySelector("#nomeCliente");
   nomeCliente.innerHTML = clienteName;
   painelOpcoes = document.querySelector(".campo_cliente_opcoes");
@@ -185,33 +187,29 @@ onMounted(() => {
     });
 });
 
-const fechaConteudos = () =>{
-  telaLista.style.display = "none"
-  painelOpcoes.style.display = "none"
-}
-
+const fechaConteudos = () => {
+  telaLista.style.display = "none";
+  painelOpcoes.style.display = "none";
+};
 
 const cancelarCliente = async () => {
   try {
     const response = await api.get(`/clientes/${cliente}`);
-   
+
     const atualizar = { ...response.data, active: !response.data.active };
     await api.put(`/clientes/${cliente}`, atualizar);
     carregarClientes();
-    
   } catch (erro) {
     console.log("Erro ao cancelar Cliente", erro);
   }
-}
+};
 
 //Route para pagina Add
 const route = useRouter();
 
 const handleAdd = () => {
   route.push({ name: "novoCliente" });
-
 };
-
 
 
 </script>
@@ -278,13 +276,14 @@ const handleAdd = () => {
         <div class="campo_cliente_opcoes">
           <p id="nomeCliente">edvaldo</p>
           <p>Comfirmar pagamento</p>
-          <p  @click="cancelarCliente" class="valorP"></p>
+          <p @click="cancelarCliente" class="valorP"></p>
+          <a :href="'https://wa.me/+55' + numeroCliente">Enviar Mensagem</a>
           <p id="editar" @click="handleAdd">Editar</p>
           <i @click="fechaConteudos" class="pi pi-times"></i>
         </div>
         <!-- ---------------------- -->
         <div
-          @click="exibirOpcoes(cliente.id, cliente.name, cliente.active)"
+          @click="exibirOpcoes(cliente.id, cliente.name, cliente.active, cliente.phone)"
           class="painel_img_infos"
           v-for="cliente in exiberCliente"
           :key="cliente.id"
@@ -532,7 +531,8 @@ img {
 }
 
 .campo_cliente_opcoes {
-  height: 250px;
+  height: 280px;
+  font-family: "itim";
 }
 
 .campo_cliente_opcoes p {
@@ -545,18 +545,29 @@ img {
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  font-family: "itim";
+}
+
+.campo_cliente_opcoes a {
+  text-decoration: none;
+  width: 240px;
+  height: 35px;
+  padding: 7px 0;
+  border: solid 1px;
+  text-align: center;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: #005085;
 }
 
 .campo_cliente_opcoes p:nth-child(2) {
   background-color: #028500;
 }
 
-.campo_cliente_opcoes p:nth-child(3) {
-  background-color: #851000;
-}
-.campo_cliente_opcoes p:nth-child(4) {
+.campo_cliente_opcoes p:nth-child(5) {
   background-color: #005085;
+  width: 100px;
 }
 
 #nomeCliente {

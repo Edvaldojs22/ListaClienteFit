@@ -51,7 +51,6 @@ const editarCliente = async () => {
   try {
     // Fazer a requisição PUT para o servidor
     const response = await api.put(`/clientes/${idCliente}`,clienteData);
-    console.log(response);
     route.push({ name: "home" });
   } catch (error) {
     console.error("Erro ao editar o cliente", error);
