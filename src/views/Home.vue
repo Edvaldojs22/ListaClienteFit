@@ -12,6 +12,7 @@ import { useRouter } from "vue-router";
 import api from "../api/api.js";
 
 //Codigo para obter data e Hora
+let anoAtual = ref("");
 let mesAtual = ref("");
 let diaAtual = ref("");
 let mesAnterior = ref("");
@@ -26,6 +27,7 @@ const obterDataHora = async () => {
     const dia = dataHora.getDate();
     mesAtual.value = mes;
     diaAtual.value = dia;
+    anoAtual.value = dataHora.getFullYear();
 
     // Obtendo o mês anterior
     const mesAnteriorData = new Date(dataHora);
@@ -36,6 +38,8 @@ const obterDataHora = async () => {
     const proximoMesData = new Date(dataHora);
     proximoMesData.setMonth(proximoMesData.getMonth() + 1);
     proximoMes = proximoMesData.toLocaleString("default", { month: "long" });
+
+    carregarRelatorioMes();
   } catch (erro) {
     console.error("Erro ao obter data e hora:", erro);
   }
@@ -57,6 +61,25 @@ let limit = 6;
 let numeroPagina = pagina;
 let next = "";
 let previous = "";
+let qtdEntradasMes = ref();
+let qtdSaidasMes = ref();
+
+//carrega dados do mes atual
+const carregarRelatorioMes = async () => {
+  try {
+    const response = await api.get("/mes", {
+      params: {
+        year: anoAtual.value,
+        monthName: mesAtual.value,
+      },
+    });
+    console.log(response.data);
+    qtdEntradasMes.value = response.data.newClients;
+    qtdSaidasMes.value = response.data.clientsLeft;
+  } catch (erro) {
+    console.error("Erro ao carregar buscar relatorio do mes:", erro);
+  }
+};
 
 //Carrega clientes ativos inicialmente
 const carregarClientes = async () => {
@@ -69,7 +92,7 @@ const carregarClientes = async () => {
         isActive: isActive,
       },
     });
-    console.log(response);
+    console.log(mesAtual);
     exiberCliente.value = response.data.results;
     next = response.data.next;
     previous = response.data.previous;
@@ -195,11 +218,9 @@ const fechaConteudos = () => {
 
 const cancelarCliente = async () => {
   try {
-    const response = await api.get(`/clientes/${cliente}`);
-
-    const atualizar = { ...response.data, active: !response.data.active };
-    await api.put(`/clientes/${cliente}`, atualizar);
+    await api.delete(`/clientes/${cliente}`);
     carregarClientes();
+    carregarRelatorioMes();
   } catch (erro) {
     console.log("Erro ao cancelar Cliente", erro);
   }
@@ -226,7 +247,7 @@ const handleAdd = () => {
 
       <div class="painel_data_number">
         <div class="entradas_saidas">
-          <p>8</p>
+          <p>{{ qtdEntradasMes }}</p>
           <p>Entradas</p>
         </div>
         <div class="ativos">
@@ -235,7 +256,7 @@ const handleAdd = () => {
           <p>Ativos</p>
         </div>
         <div class="entradas_saidas">
-          <p>2</p>
+          <p>{{ qtdSaidasMes }}</p>
           <p>Saidas</p>
         </div>
       </div>
