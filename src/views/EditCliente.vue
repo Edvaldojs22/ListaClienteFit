@@ -5,9 +5,9 @@ import { onMounted, ref } from "vue";
 import api from "../api/api.js";
 
 const route = useRouter();
-const voltar = () =>{
-  route.push({name:"home"})
-}
+const voltar = () => {
+  route.push({ name: "home" });
+};
 
 const getIdFromPath = () => {
   const path = route.currentRoute.value.fullPath;
@@ -40,6 +40,7 @@ const editarCliente = async () => {
   // Preparar os dados do cliente para envio
   const clienteData = {
     name: cliente.value.name,
+    nickname: cliente.value.nickname,
     phone: cliente.value.phone,
     birthdate: cliente.value.birthdate,
     enrollmentDate: cliente.value.enrollmentDate,
@@ -50,14 +51,12 @@ const editarCliente = async () => {
 
   try {
     // Fazer a requisição PUT para o servidor
-    const response = await api.put(`/clientes/${idCliente}`,clienteData);
+    const response = await api.put(`/clientes/${idCliente}`, clienteData);
     route.push({ name: "home" });
   } catch (error) {
     console.error("Erro ao editar o cliente", error);
   }
 };
-
-
 </script>
 
 <template>
@@ -73,6 +72,11 @@ const editarCliente = async () => {
       <div class="caixa_ipuntAdd">
         <p>Nome:</p>
         <input v-model="cliente.name" id="username" type="text" />
+      </div>
+
+      <div class="caixa_ipuntAdd">
+        <p>Apelido:</p>
+        <input v-model="cliente.nickname" id="nickname" type="text" />
       </div>
 
       <div class="caixa_ipuntAdd">
@@ -94,13 +98,11 @@ const editarCliente = async () => {
         <p>Vencimento:</p>
         <input v-model="cliente.dueDay" id="password" type="text" />
       </div>
-  
+
       <button type="submit" id="botao_add">Editar</button>
-       <i @click="voltar" class="pi pi-times"></i>
+      <i @click="voltar" class="pi pi-times"></i>
     </form>
-     
   </div>
-  
 </template>
 
 <style>
