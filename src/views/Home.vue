@@ -14,6 +14,7 @@ import api from "../api/api.js";
 //Codigo para obter data e Hora
 let anoAtual = ref("");
 let mesAtual = ref("");
+let mesAtualInteger = ref("");
 let diaAtual = ref("");
 let mesAnterior = ref("");
 let proximoMes = ref("");
@@ -26,6 +27,7 @@ const obterDataHora = async () => {
     const mes = dataHora.toLocaleString("default", { month: "long" });
     const dia = dataHora.getDate();
     mesAtual.value = mes;
+    mesAtualInteger.value = dataHora.getMonth() + 1;
     diaAtual.value = dia;
     anoAtual.value = dataHora.getFullYear();
 
@@ -70,10 +72,10 @@ const carregarRelatorioMes = async () => {
     const response = await api.get("/mes", {
       params: {
         year: anoAtual.value,
-        monthName: mesAtual.value,
+        monthNumber: mesAtualInteger.value,
       },
     });
-    console.log(response.data);
+    console.log(response);
     qtdEntradasMes.value = response.data.newClients;
     qtdSaidasMes.value = response.data.clientsLeft;
   } catch (erro) {
@@ -92,7 +94,6 @@ const carregarClientes = async () => {
         isActive: isActive,
       },
     });
-    console.log(mesAtual);
     exiberCliente.value = response.data.results;
     next = response.data.next;
     previous = response.data.previous;
@@ -216,9 +217,14 @@ const fechaConteudos = () => {
   painelOpcoes.style.display = "none";
 };
 
-const cancelarCliente = async () => {
+const mudarStatusCliente = async () => {
   try {
-    await api.delete(`/clientes/${cliente}`);
+    const response = await api.get(`/clientes/${cliente}`);
+    if (response.data.active) {
+      await api.delete(`/clientes/${cliente}`);
+    } else {
+      await api.put(`/clientes/ativar/${cliente}`);
+    }
     carregarClientes();
     carregarRelatorioMes();
   } catch (erro) {
@@ -295,7 +301,7 @@ const handleAdd = () => {
         <div class="campo_cliente_opcoes">
           <p id="nomeCliente">edvaldo</p>
           <p>Comfirmar pagamento</p>
-          <p @click="cancelarCliente" class="valorP"></p>
+          <p @click="mudarStatusCliente" class="valorP"></p>
           <a :href="'https://wa.me/+55' + numeroCliente">Enviar Mensagem</a>
           <p id="editar" @click="handleAdd">Editar</p>
           <i @click="fechaConteudos" class="pi pi-times"></i>
