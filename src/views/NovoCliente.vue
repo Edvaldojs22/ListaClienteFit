@@ -5,20 +5,19 @@ import { ref } from "vue";
 import api from "../api/api.js";
 import axios from "axios";
 
-let dataAtual = ref('');
+let dataAtual = ref("");
 
 const obterDataHora = async () => {
   try {
     const resposta = await axios.get("https://worldtimeapi.org/api/ip");
     const dataHora = new Date(resposta.data.datetime);
-    dataAtual.value = dataHora.toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
+    dataAtual.value = dataHora.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
     });
-   
-   cliente.value.enrollmentDate = dataAtual.value
 
+    cliente.value.enrollmentDate = dataAtual.value;
   } catch (erro) {
     console.error("Erro ao obter data e hora:", erro);
   }
@@ -26,12 +25,11 @@ const obterDataHora = async () => {
 
 obterDataHora();
 
-
 const route = useRouter();
 
-const voltar = () =>{
-  route.push({name:"home"})
-}
+const voltar = () => {
+  route.push({ name: "home" });
+};
 
 const cliente = ref({
   name: "",
@@ -46,6 +44,7 @@ const adicionarCliente = async () => {
   // Preparar os dados do cliente para envio
   const clienteData = {
     name: cliente.value.name,
+    nickname: cliente.value.nickname,
     phone: cliente.value.phone,
     birthdate: cliente.value.birthdate,
     enrollmentDate: cliente.value.enrollmentDate,
@@ -60,7 +59,6 @@ const adicionarCliente = async () => {
   } catch (error) {
     console.log("Erro ao adicionar novo cliente", error);
   }
-
 };
 </script>
 <template>
@@ -76,6 +74,10 @@ const adicionarCliente = async () => {
       <div class="caixa_ipuntAdd">
         <p>Nome:</p>
         <input v-model="cliente.name" id="username" type="text" />
+      </div>
+      <div class="caixa_ipuntAdd">
+        <p>Apelido:</p>
+        <input v-model="cliente.nickname" id="nickname" type="text" />
       </div>
 
       <div class="caixa_ipuntAdd">
@@ -97,9 +99,9 @@ const adicionarCliente = async () => {
         <p>Vencimento:</p>
         <input v-model="cliente.dueDay" id="vencimento" type="text" />
       </div>
-      
+
       <button @click="handleHome" type="submit" id="botao_add">Salvar</button>
-       <i @click="voltar" class="pi pi-times"></i>
+      <i @click="voltar" class="pi pi-times"></i>
     </form>
   </div>
 </template>

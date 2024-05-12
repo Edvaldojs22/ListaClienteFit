@@ -69,6 +69,7 @@ const carregarClientes = async () => {
         isActive: isActive,
       },
     });
+    console.log(response);
     exiberCliente.value = response.data.results;
     next = response.data.next;
     previous = response.data.previous;
@@ -162,11 +163,11 @@ onMounted(() => {
 });
 
 let cliente = "";
-let numeroCliente = ref()
+let numeroCliente = ref();
 const exibirOpcoes = (clienteId, clienteName, clienteEstado, clienteNumero) => {
   if (clienteEstado) {
     valorP_botaoValor.innerHTML = "Cancelar Cliente";
-     valorP_botaoValor.style.backgroundColor = "#851000";
+    valorP_botaoValor.style.backgroundColor = "#851000";
   } else {
     valorP_botaoValor.style.backgroundColor = "#028500";
     valorP_botaoValor.innerHTML = "Confirma Cliente";
@@ -210,10 +211,7 @@ const route = useRouter();
 const handleAdd = () => {
   route.push({ name: "novoCliente" });
 };
-
-
 </script>
-
 
 <template>
   <div>
@@ -283,14 +281,21 @@ const handleAdd = () => {
         </div>
         <!-- ---------------------- -->
         <div
-          @click="exibirOpcoes(cliente.id, cliente.name, cliente.active, cliente.phone)"
+          @click="
+            exibirOpcoes(
+              cliente.id,
+              cliente.nickname,
+              cliente.active,
+              cliente.phone
+            )
+          "
           class="painel_img_infos"
           v-for="cliente in exiberCliente"
           :key="cliente.id"
         >
           <img class="img_user" :src="IconUser" alt="" />
           <div>
-            <p>{{ cliente.name }}</p>
+            <p>{{ cliente.nickname }}</p>
             <p>{{ cliente.phone }}</p>
           </div>
           <div>
@@ -339,7 +344,7 @@ const handleAdd = () => {
   </div>
 </template>
 
-<style >
+<style>
 @import "primeicons/primeicons.css";
 .pi-times {
   position: absolute;
