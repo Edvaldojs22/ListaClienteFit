@@ -145,8 +145,8 @@ const handleLogin = async () => {
 }
 
 #botao_login {
-  width: calc(100% - 30px);
-  height: 40px;
+  width: calc(100% - 50px);
+  height: 35px;
   margin: 0 auto;
   font-size: 19px;
   border: none;

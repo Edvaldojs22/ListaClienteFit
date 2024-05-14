@@ -212,10 +212,6 @@ onMounted(() => {
     });
 });
 
-const fechaConteudos = () => {
-  telaLista.style.display = "none";
-  painelOpcoes.style.display = "none";
-};
 
 const mudarStatusCliente = async () => {
   try {
@@ -238,6 +234,42 @@ const route = useRouter();
 const handleAdd = () => {
   route.push({ name: "novoCliente" });
 };
+
+//Route para pagina Mensagens
+let campo_mensagem;
+let botaoMsg
+onMounted(() => {
+   campo_mensagem = document.querySelector('.campo_pesquisa_mensagem');
+   botaoMsg = document.querySelector('.iconMensagem');
+})
+const opcoesMensagem = () => {
+  campo_mensagem.style.display = "flex"
+}
+
+const tipoMensagem = (event) => {
+  let tipo = event.target.id
+  if(tipo ==  "cobranca"){
+    route.push({ name: "mensagem" });
+  }
+  else if (tipo == "aniversario"){
+     route.push({ name: "mensagemAniversario" });
+  }
+}
+
+//Fechar conteudos
+const fechaConteudos = () => {
+  if(painelOpcoes){
+    painelOpcoes.style.display = "none";
+  }
+  if(telaLista){
+    telaLista.style.display = "none";
+  }
+  if(campo_mensagem){
+    campo_mensagem.style.display = "none";
+  }
+};
+
+
 </script>
 
 <template>
@@ -363,8 +395,16 @@ const handleAdd = () => {
     </main>
     <!-- ---------------------------------------------------------------->
 
+    <!-- Escolha que tipo de Mensagem -->
+    <div class="campo_pesquisa_mensagem">
+      <p @click="tipoMensagem"  id="cobranca">Mensagem Cobrança</p>
+      <p @click="tipoMensagem"  id="aniversario">Mensagem Aniversário</p>
+      <i @click="fechaConteudos" class="pi pi-times"></i>
+    </div>
+    <!-- ----------------------------------------- -->
+
     <footer>
-      <img :src="IconZap" alt="" />
+      <img class="IconMensagem" @click="opcoesMensagem" :src="IconZap" alt="" />
       <img @click="handleAdd" :src="IconAdd" alt="" />
       <img :src="IconUserFooter" alt="" />
     </footer>
@@ -525,7 +565,7 @@ img {
 }
 
 .campo_pesquisa_lista,
-.campo_cliente_opcoes {
+.campo_cliente_opcoes,.campo_pesquisa_mensagem {
   background-color: rgba(102, 102, 102, 0.608);
   backdrop-filter: blur(5px);
   position: absolute;
@@ -544,7 +584,7 @@ img {
   font-family: sans-serif;
 }
 
-.campo_pesquisa_lista p {
+.campo_pesquisa_lista p, .campo_pesquisa_mensagem p {
   border-radius: 15px;
   width: calc(100% - 50px);
   padding: 10px 0;
@@ -553,6 +593,9 @@ img {
   color: #ffffff;
   cursor: pointer;
   font-family: "itim";
+}
+.campo_pesquisa_mensagem p{
+  background-color: #00852c;
 }
 
 .campo_pesquisa_lista p:nth-child(1) {

@@ -4,31 +4,45 @@ import Home from '../views/Home.vue';
 import Login from '../views/Login.vue';
 import EditCliente from '../views/EditCliente.vue';
 import NovoCliente from '../views/NovoCliente.vue'
+import Mensagem from '../views/Mensagem.vue';
+import MensagemAniversario from '../views/MensagemAniversario.vue';
 
 
 const routes = [
     {
-        path: '/home',
+        path: '/Home',
         name: 'home',
         component: Home
     },
     {
-        path: '/', 
+        path: '/',
         name: 'login',
         component: Login
     },
     {
-        path: '/editar/:id',
+        path: '/Editar/:id',
         name: 'editarCliente',
         component: EditCliente
     },
- 
+
     {
         path: '/Novo',
         name: 'novoCliente',
         component: NovoCliente
+    },
+
+    {
+        path: '/Mesagem',
+        name: 'mensagem',
+        component: Mensagem
+    },
+    {
+        path: '/MesagemAniversario',
+        name: 'mensagemAniversario',
+        component: MensagemAniversario
     }
- 
+
+
 ];
 
 const router = createRouter({

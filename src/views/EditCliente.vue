@@ -147,13 +147,18 @@ const editarCliente = async () => {
 }
 
 .painel_add .caixa_ipuntAdd:nth-child(6) {
-  width: 160px;
+  width: 250px;
   margin: 0 auto;
+}
+.painel_add .caixa_ipuntAdd:nth-child(6) input {
+
+  width: 100px;
 }
 
 #botao_add {
   width: 100%;
-  height: 35px;
+  padding: 7px;
+  height: 50px;
   margin-top: 40px;
   font-size: 19px;
   border: none;
