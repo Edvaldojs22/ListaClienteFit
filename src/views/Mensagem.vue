@@ -27,6 +27,7 @@ const voltar = () => {
 </template>
 
 <style >
+
 .painel_msg {
   width: calc(100% - 50px);
   max-width: 500px;

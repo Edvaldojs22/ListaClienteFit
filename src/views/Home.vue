@@ -256,6 +256,12 @@ const tipoMensagem = (event) => {
   }
 }
 
+//Route para pagina User
+
+const handleUser = () =>{
+  route.push({name:"user"})
+}
+
 //Fechar conteudos
 const fechaConteudos = () => {
   if(painelOpcoes){
@@ -268,6 +274,8 @@ const fechaConteudos = () => {
     campo_mensagem.style.display = "none";
   }
 };
+
+
 
 
 </script>
@@ -406,7 +414,7 @@ const fechaConteudos = () => {
     <footer>
       <img class="IconMensagem" @click="opcoesMensagem" :src="IconZap" alt="" />
       <img @click="handleAdd" :src="IconAdd" alt="" />
-      <img :src="IconUserFooter" alt="" />
+      <img @click="handleUser" :src="IconUserFooter" alt="" />
     </footer>
   </div>
 </template>

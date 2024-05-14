@@ -6,6 +6,7 @@ import EditCliente from '../views/EditCliente.vue';
 import NovoCliente from '../views/NovoCliente.vue'
 import Mensagem from '../views/Mensagem.vue';
 import MensagemAniversario from '../views/MensagemAniversario.vue';
+import User from '../views/User.vue'
 
 
 const routes = [
@@ -40,6 +41,11 @@ const routes = [
         path: '/MesagemAniversario',
         name: 'mensagemAniversario',
         component: MensagemAniversario
+    },
+    {
+        path: '/User',
+        name:'user',
+        component: User
     }
 
 
