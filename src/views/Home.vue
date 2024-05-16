@@ -75,7 +75,6 @@ const carregarRelatorioMes = async () => {
         monthNumber: mesAtualInteger.value,
       },
     });
-    console.log(response);
     qtdEntradasMes.value = response.data.newClients;
     qtdSaidasMes.value = response.data.clientsLeft;
   } catch (erro) {
@@ -83,6 +82,7 @@ const carregarRelatorioMes = async () => {
   }
 };
 
+//
 //Carrega clientes ativos inicialmente
 const carregarClientes = async () => {
   try {
@@ -94,6 +94,7 @@ const carregarClientes = async () => {
         isActive: isActive,
       },
     });
+
     exiberCliente.value = response.data.results;
     next = response.data.next;
     previous = response.data.previous;
@@ -143,6 +144,7 @@ const buscaClientePeloNome = async (nome) => {
 //Codigo responsavel por mudar a lista
 let valorP_tipoLista;
 let telaLista;
+
 onMounted(() => {
   valorP_tipoLista = document.querySelector(".tipoLista");
 });
@@ -212,7 +214,6 @@ onMounted(() => {
     });
 });
 
-
 const mudarStatusCliente = async () => {
   try {
     const response = await api.get(`/clientes/${cliente}`);
@@ -230,54 +231,86 @@ const mudarStatusCliente = async () => {
 
 //Route para pagina Add
 const route = useRouter();
-
 const handleAdd = () => {
   route.push({ name: "novoCliente" });
 };
 
 //Route para pagina Mensagens
 let campo_mensagem;
-let botaoMsg
+let botaoMsg;
 onMounted(() => {
-   campo_mensagem = document.querySelector('.campo_pesquisa_mensagem');
-   botaoMsg = document.querySelector('.iconMensagem');
-})
+  campo_mensagem = document.querySelector(".campo_pesquisa_mensagem");
+  botaoMsg = document.querySelector(".iconMensagem");
+});
+
 const opcoesMensagem = () => {
-  campo_mensagem.style.display = "flex"
-}
+  campo_mensagem.style.display = "flex";
+};
 
 const tipoMensagem = (event) => {
-  let tipo = event.target.id
-  if(tipo ==  "cobranca"){
+  let tipo = event.target.id;
+  if (tipo == "cobranca") {
     route.push({ name: "mensagem" });
-  }
-  else if (tipo == "aniversario"){
-     route.push({ name: "mensagemAniversario" });
-  }
-}
-
-//Route para pagina User
-
-const handleUser = () =>{
-  route.push({name:"user"})
-}
-
-//Fechar conteudos
-const fechaConteudos = () => {
-  if(painelOpcoes){
-    painelOpcoes.style.display = "none";
-  }
-  if(telaLista){
-    telaLista.style.display = "none";
-  }
-  if(campo_mensagem){
-    campo_mensagem.style.display = "none";
+  } else if (tipo == "aniversario") {
+    route.push({ name: "mensagemAniversario" });
   }
 };
 
+//Route para pagina User
+const handleUser = () => {
+  route.push({ name: "user" });
+};
 
+//Fechar conteudos
+const fechaConteudos = () => {
+  if (painelOpcoes) {
+    painelOpcoes.style.display = "none";
+  }
+  if (telaLista) {
+    telaLista.style.display = "none";
+  }
+  if (campo_mensagem) {
+    campo_mensagem.style.display = "none";
+  }
+  if (botaoPagamento) {
+    botaoPagamento.style.display = "none";
+    botaoConfirma.style.display = "none";
+  }
+};
 
+//Acionar botão de pagamento
+let botaoLabel;
+let botaoPagamento;
+let botaoConfirma;
+onMounted(() => {
+  botaoLabel = document.querySelector(".labelPagamento");
+  botaoPagamento = document.querySelector("#pagamento");
+  botaoConfirma = document.querySelector(".botaoPagamento");
+});
 
+const ativarBotao = () => {
+  botaoLabel.addEventListener("click", () => {
+    botaoPagamento.style.display = "flex";
+    botaoConfirma.style.display = "flex";
+  });
+};
+
+//Codigo para enviar o valor pago
+const pagamentoCliente = async () => {
+  console.log(botaoPagamento.value);
+  console.log(cliente);
+  try {
+    const enviarPagamento = await api.post("/clientes/confirmarPagamento", {
+      params: {
+        clientId: cliente,
+        amount: botaoPagamento.value,
+      },
+    });
+    carregarClientes();
+  } catch (erro) {
+    console.log("Erro ao alterar status de pagamento do cliente", erro);
+  }
+};
 </script>
 
 <template>
@@ -339,8 +372,15 @@ const fechaConteudos = () => {
 
         <!--Opções cliente -->
         <div class="campo_cliente_opcoes">
-          <p id="nomeCliente">edvaldo</p>
-          <p>Comfirmar pagamento</p>
+          <p id="nomeCliente"></p>
+
+          <label @click="ativarBotao" for="pagamento" class="labelPagamento"
+            >Realizar pagamento</label
+          >
+          <input id="pagamento" type="number" placeholder="Valor" />
+          <button class="botaoPagamento" @click="pagamentoCliente">
+            Confirmar
+          </button>
           <p @click="mudarStatusCliente" class="valorP"></p>
           <a :href="'https://wa.me/+55' + numeroCliente">Enviar Mensagem</a>
           <p id="editar" @click="handleAdd">Editar</p>
@@ -364,9 +404,12 @@ const fechaConteudos = () => {
           <div>
             <p>{{ cliente.nickname }}</p>
             <p>{{ cliente.phone }}</p>
+             <p id="diaPagamento" v-if="cliente.lastPaymentDate">
+            Pago dia: {{ cliente.lastPaymentDate }}
+          </p>
           </div>
+         
           <div>
-            <p></p>
             <p class="vencimento">{{ cliente.dueDay }}</p>
           </div>
         </div>
@@ -405,8 +448,8 @@ const fechaConteudos = () => {
 
     <!-- Escolha que tipo de Mensagem -->
     <div class="campo_pesquisa_mensagem">
-      <p @click="tipoMensagem"  id="cobranca">Mensagem Cobrança</p>
-      <p @click="tipoMensagem"  id="aniversario">Mensagem Aniversário</p>
+      <p @click="tipoMensagem" id="cobranca">Mensagem Cobrança</p>
+      <p @click="tipoMensagem" id="aniversario">Mensagem Aniversário</p>
       <i @click="fechaConteudos" class="pi pi-times"></i>
     </div>
     <!-- ----------------------------------------- -->
@@ -424,11 +467,17 @@ const fechaConteudos = () => {
 .pi-times {
   position: absolute;
   top: 15px;
-  right: 15px;
+  right: 10px;
   font-size: 20px;
   font-weight: 1000;
   color: #0d2a14;
   cursor: pointer;
+}
+
+#diaPagamento {
+  font-size: 15px;
+  display: inline-block;
+  margin-left: 30px;
 }
 
 .lista_clientes {
@@ -573,7 +622,8 @@ img {
 }
 
 .campo_pesquisa_lista,
-.campo_cliente_opcoes,.campo_pesquisa_mensagem {
+.campo_cliente_opcoes,
+.campo_pesquisa_mensagem {
   background-color: rgba(102, 102, 102, 0.608);
   backdrop-filter: blur(5px);
   position: absolute;
@@ -584,25 +634,26 @@ img {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: 13px;
   width: 300px;
-  height: 200px;
   border-radius: 20px;
   z-index: 1;
   font-family: sans-serif;
+  padding: 10px 0;
 }
 
-.campo_pesquisa_lista p, .campo_pesquisa_mensagem p {
+.campo_pesquisa_lista p,
+.campo_pesquisa_mensagem p {
   border-radius: 15px;
-  width: calc(100% - 50px);
+  width: calc(100% - 80px);
   padding: 10px 0;
-  max-width: 400px;
+  max-width: 300px;
   text-align: center;
   color: #ffffff;
   cursor: pointer;
   font-family: "itim";
 }
-.campo_pesquisa_mensagem p{
+.campo_pesquisa_mensagem p {
   background-color: #00852c;
 }
 
@@ -614,7 +665,6 @@ img {
 }
 
 .campo_cliente_opcoes {
-  height: 280px;
   font-family: "itim";
 }
 
@@ -644,11 +694,39 @@ img {
   background-color: #005085;
 }
 
-.campo_cliente_opcoes p:nth-child(2) {
+.campo_cliente_opcoes label {
   background-color: #028500;
+  width: 240px;
+  height: 35px;
+  padding: 7px 0;
+  border: solid 1px;
+  text-align: center;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
 }
 
-.campo_cliente_opcoes p:nth-child(5) {
+#pagamento {
+  border: none;
+  border-radius: 50px;
+  width: 100px;
+  height: 30px;
+  text-align: center;
+  display: none;
+  outline: none;
+}
+
+.botaoPagamento {
+  padding: 5px 20px;
+  border: none;
+  border-radius: 20px;
+  display: none;
+  background-color: #00852c;
+  color: white;
+}
+
+.campo_cliente_opcoes p:nth-child(7) {
   background-color: #005085;
   width: 100px;
 }
@@ -690,14 +768,29 @@ img {
 
 .painel_img_infos div p:nth-child(1) {
   margin-bottom: 5px;
-  font-size: 17px;
+  font-size: 20px;
 }
+.painel_img_infos div p:nth-child(2) {
+  display: inline-block
+}
+
+.painel_img_infos div:nth-child(3) p {
+  background-color:#00852c;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+}
+
 
 .vencimento {
   position: absolute;
-  right: 10px;
-  bottom: 5px;
-  font-size: 1.5rem;
+  font-size: 30px;
+  right: 5px;
+  bottom: -3px;
 }
 
 .painel_paginacao {

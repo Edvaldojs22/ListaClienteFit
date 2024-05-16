@@ -81,12 +81,12 @@ const editarCliente = async () => {
 
       <div class="caixa_ipuntAdd">
         <p>Telefone:</p>
-        <input v-model="cliente.phone" id="password" type="text" />
+        <input v-model="cliente.phone" id="password" type="text" maxlength="11" />
       </div>
 
       <div class="caixa_ipuntAdd">
         <p>Data Nascimento:</p>
-        <input v-model="cliente.birthdate" id="password" type="text" />
+        <input v-model="cliente.birthdate" id="password" type="" />
       </div>
 
       <div class="caixa_ipuntAdd">
