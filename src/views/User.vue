@@ -11,6 +11,8 @@ const voltar = () => {
 const logout = () =>{
   route.push({name: "login"})
 }
+
+
 </script>
 
 <template>
@@ -44,6 +46,8 @@ const logout = () =>{
         <p>Sair</p>
         <i @click="logout" class="pi pi-sign-out"></i>
       </div>
+
+       <i @click="voltar" class="pi pi-times"></i>
     </div>
   </div>
 </template>

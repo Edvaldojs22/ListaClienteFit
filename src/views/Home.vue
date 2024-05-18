@@ -1,6 +1,6 @@
 <script setup>
 import axios, { Axios } from "axios";
-import { onMounted, ref } from "vue";
+import { nextTick, onMounted, ref } from "vue";
 import IconZap from "../assets/img/zap.png";
 import IconAdd from "../assets/img/add.png";
 import IconUserFooter from "../assets/img/userFooter .png";
@@ -42,6 +42,7 @@ const obterDataHora = async () => {
     proximoMes = proximoMesData.toLocaleString("default", { month: "long" });
 
     carregarRelatorioMes();
+    carregarClientes();
   } catch (erro) {
     console.error("Erro ao obter data e hora:", erro);
   }
@@ -84,6 +85,7 @@ const carregarRelatorioMes = async () => {
 
 //
 //Carrega clientes ativos inicialmente
+let corPagamento; //Variavel para controle de cor pagamento
 const carregarClientes = async () => {
   try {
     const response = await api.get("/clientes", {
@@ -99,6 +101,36 @@ const carregarClientes = async () => {
     next = response.data.next;
     previous = response.data.previous;
     quantidadesAtivo = response.data.results.length;
+
+    nextTick(() => {
+      const corPagamento = document.querySelectorAll(".vencimento"); // Seleciona todos os elementos com a classe .vencimento
+
+      exiberCliente.value.forEach((cliente, index) => {
+        if (cliente.active) {
+          if (corPagamento[index]) {
+            corPagamento[index].style.backgroundColor = " #797979";
+            if (
+              ( cliente.dueDay >= diaAtual.value ) ||
+              (cliente.paymentStatus == false)
+            ) {
+              corPagamento[index].style.backgroundColor = " #850000";
+            }
+          }
+
+          if(cliente.dueDay > diaAtual.value) {
+             corPagamento[index].style.backgroundColor = " #797979";
+          }
+          if(cliente.paymentStatus){
+             corPagamento[index].style.backgroundColor = "green";
+          }
+
+        } else {
+          if (corPagamento[index]) {
+           corPagamento[index].style.backgroundColor = "#850000";
+          }
+        }
+      });
+    });
   } catch (erro) {
     console.error("Erro ao carregar clientesAtivos:", erro);
   }
@@ -297,8 +329,6 @@ const ativarBotao = () => {
 
 //Codigo para enviar o valor pago
 const pagamentoCliente = async () => {
-  console.log(botaoPagamento.value);
-  console.log(cliente);
   try {
     const enviarPagamento = await api.post("/clientes/confirmarPagamento", {
       params: {
@@ -306,6 +336,7 @@ const pagamentoCliente = async () => {
         amount: botaoPagamento.value,
       },
     });
+    painelOpcoes.style.display = "none";
     carregarClientes();
   } catch (erro) {
     console.log("Erro ao alterar status de pagamento do cliente", erro);
@@ -404,11 +435,11 @@ const pagamentoCliente = async () => {
           <div>
             <p>{{ cliente.nickname }}</p>
             <p>{{ cliente.phone }}</p>
-             <p id="diaPagamento" v-if="cliente.lastPaymentDate">
-            Pago dia: {{ cliente.lastPaymentDate }}
-          </p>
+            <p id="diaPagamento" v-if="cliente.lastPaymentDate">
+              Pago dia: {{ cliente.lastPaymentDate }}
+            </p>
           </div>
-         
+
           <div>
             <p class="vencimento">{{ cliente.dueDay }}</p>
           </div>
@@ -771,11 +802,14 @@ img {
   font-size: 20px;
 }
 .painel_img_infos div p:nth-child(2) {
-  display: inline-block
+  display: inline-block;
 }
 
-.painel_img_infos div:nth-child(3) p {
-  background-color:#00852c;
+.vencimento {
+  position: absolute;
+  font-size: 30px;
+  right: 5px;
+  bottom: -3px;
   color: white;
   display: flex;
   justify-content: center;
@@ -783,14 +817,6 @@ img {
   width: 35px;
   height: 35px;
   border-radius: 50%;
-}
-
-
-.vencimento {
-  position: absolute;
-  font-size: 30px;
-  right: 5px;
-  bottom: -3px;
 }
 
 .painel_paginacao {
