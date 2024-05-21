@@ -5,6 +5,12 @@ const route = useRouter()
 const voltar = () => {
   route.push({ name: "home" });
 };
+
+const salvarMensagem = (event) => {
+  event.preventDefault();
+  const novaMensagem = document.querySelector("[name=novaMensagem]").value;
+  console.log("Nova mensagem:", novaMensagem);
+}
 </script>
 
 <template>
@@ -18,8 +24,8 @@ const voltar = () => {
       </div>
       <form action="" class="formMsg">
         <label for="novaMensagem">Nova Mensagem</label>
-        <textarea name="novaMensagem"></textarea>
-        <button class="botaoSalvar">Salvar</button>
+        <textarea name="novaMensagem">$cliente$,$diaVencimento$</textarea>
+        <button type="sumbit" @click="salvarMensagem"  class="botaoSalvar">Salvar</button>
       </form>
        <i @click="voltar" class="pi pi-times"></i>
     </div>

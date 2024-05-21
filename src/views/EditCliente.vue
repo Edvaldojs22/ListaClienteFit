@@ -52,15 +52,46 @@ const editarCliente = async () => {
   try {
     // Fazer a requisição PUT para o servidor
     const response = await api.put(`/clientes/${idCliente}`, clienteData);
-    route.push({ name: "home" });
+    setTimeout(() => {
+      route.push({ name: "home" });
+    },2000);
+
+    cardSucesso.style.display = "flex";
+    setTimeout(fechaCard, 2000);
   } catch (error) {
+    cardErro.style.display = "flex";
+    setTimeout(fechaCard(cardErro), 2000);
     console.error("Erro ao editar o cliente", error);
   }
+};
+
+let cardSucesso;
+let cardErro;
+onMounted(() => {
+  cardSucesso = document.querySelector(".sucesso");
+  cardErro = document.querySelector(".erro");
+});
+
+const fechaCard = () => {
+  cardSucesso.style.display = "none";
+  cardErro.style.display = "none";
 };
 </script>
 
 <template>
   <div class="painel_login">
+    <!-- //Card para tratamento -->
+    <div class="card sucesso">
+      <p>Operação realizada com sucesso</p>
+      <i class="pi pi-check"></i>
+    </div>
+
+    <div class="card erro">
+      <p>Erro na operação</p>
+      <i class="pi pi-times-circle"></i>
+    </div>
+
+    <!-- -------------------------------- -->
     <div class="cor_top"></div>
     <div class="cor_bottom"></div>
     <form @submit.prevent="editarCliente" action="" class="painel_add">
@@ -81,7 +112,12 @@ const editarCliente = async () => {
 
       <div class="caixa_ipuntAdd">
         <p>Telefone:</p>
-        <input v-model="cliente.phone" id="password" type="text" maxlength="11" />
+        <input
+          v-model="cliente.phone"
+          id="password"
+          type="text"
+          maxlength="11"
+        />
       </div>
 
       <div class="caixa_ipuntAdd">
@@ -151,7 +187,6 @@ const editarCliente = async () => {
   margin: 0 auto;
 }
 .painel_add .caixa_ipuntAdd:nth-child(6) input {
-
   width: 100px;
 }
 

@@ -110,23 +110,22 @@ const carregarClientes = async () => {
           if (corPagamento[index]) {
             corPagamento[index].style.backgroundColor = " #797979";
             if (
-              ( cliente.dueDay >= diaAtual.value ) ||
-              (cliente.paymentStatus == false)
+              cliente.dueDay >= diaAtual.value ||
+              cliente.paymentStatus == false
             ) {
               corPagamento[index].style.backgroundColor = " #850000";
             }
           }
 
-          if(cliente.dueDay > diaAtual.value) {
-             corPagamento[index].style.backgroundColor = " #797979";
+          if (cliente.dueDay > diaAtual.value) {
+            corPagamento[index].style.backgroundColor = " #797979";
           }
-          if(cliente.paymentStatus){
-             corPagamento[index].style.backgroundColor = "green";
+          if (cliente.paymentStatus) {
+            corPagamento[index].style.backgroundColor = "green";
           }
-
         } else {
           if (corPagamento[index]) {
-           corPagamento[index].style.backgroundColor = "#850000";
+            corPagamento[index].style.backgroundColor = "#850000";
           }
         }
       });
@@ -337,15 +336,47 @@ const pagamentoCliente = async () => {
       },
     });
     painelOpcoes.style.display = "none";
+    cardSucesso.style.display = "flex";
+    setTimeout(fechaCard, 2000);
     carregarClientes();
   } catch (erro) {
+    cardErro.style.display = "flex";
+    setTimeout(fechaCard(cardErro), 2000);
     console.log("Erro ao alterar status de pagamento do cliente", erro);
   }
 };
+
+let cardSucesso;
+let cardErro;
+onMounted(() => {
+  cardSucesso = document.querySelector(".sucesso");
+  cardErro = document.querySelector(".erro");
+});
+
+const fechaCard = () => {
+  cardSucesso.style.display = "none";
+  cardErro.style.display = "none"
+};
+
+const fverificacao = () =>{
+
+}
 </script>
 
 <template>
   <div>
+    <!-- //Card para tratamento -->
+    <div class="card sucesso">
+      <p>Operação realizada com sucesso</p>
+      <i class="pi pi-check"></i>
+    </div>
+
+    <div class="card erro">
+      <p>Erro na operação</p>
+      <i class="pi pi-times-circle"></i>
+    </div>
+
+    <!-- -------------------------------- -->
     <header>
       <div class="painel_text_icons">
         <p>Clientes</p>
@@ -503,6 +534,47 @@ const pagamentoCliente = async () => {
   font-weight: 1000;
   color: #0d2a14;
   cursor: pointer;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  width: 250px;
+  height: 80px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+  top: 30px;
+  z-index: 1;
+  font-size: 16px;
+}
+
+.sucesso {
+  border: solid 2px #028500;
+  color: #028500;
+  display: none;
+}
+
+.sucesso i {
+  font-size: 20px;
+  color: #028500;
+}
+
+.erro {
+  border: solid 2px #851000;
+  color: #851000;
+  display: none;
+}
+
+.erro i {
+  font-size: 20px;
+  color: #851000;
 }
 
 #diaPagamento {
