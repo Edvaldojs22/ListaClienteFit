@@ -36,7 +36,6 @@ const carregarRelatorioMes = async () => {
         monthNumber: mesAtual.value,
       },
     });
-    console.log(response.data);
     entradasMesAtual.value = response.data.entradasAtual;
     saidasMesAtual.value = response.data.saidasAtual;
     faturamentoMesAtual.value = response.data.faturamentoAtual;
