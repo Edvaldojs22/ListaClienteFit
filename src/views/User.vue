@@ -1,6 +1,19 @@
 <script setup>
 import { useRouter } from "vue-router";
 import IconsUser from "../assets/img/user.png";
+import api from "../api/api.js";
+import { ref, onMounted } from "vue";
+
+const anoAtual = ref("");
+const mesAtual = ref("");
+const nomeMesAtual = ref();
+const nomeMesAnterior = ref();
+let faturamentoMesAtual = ref("");
+let faturamentoMesAnterior = ref("");
+let entradasMesAtual = ref("");
+let saidasMesAtual = ref("");
+let entradasMesAnterior = ref("");
+let saidasMesAnterior = ref("");
 
 const route = useRouter();
 
@@ -8,11 +21,38 @@ const voltar = () => {
   route.push({ name: "home" });
 };
 
-const logout = () =>{
-  route.push({name: "login"})
-}
+const logout = () => {
+  route.push({ name: "login" });
+};
 
+const carregarRelatorioMes = async () => {
+  const dataAtual = new Date();
+  anoAtual.value = dataAtual.getFullYear();
+  mesAtual.value = dataAtual.getMonth() + 1;
+  try {
+    const response = await api.get("/mes/usuario", {
+      params: {
+        year: anoAtual.value,
+        monthNumber: mesAtual.value,
+      },
+    });
+    console.log(response.data);
+    entradasMesAtual.value = response.data.entradasAtual;
+    saidasMesAtual.value = response.data.saidasAtual;
+    faturamentoMesAtual.value = response.data.faturamentoAtual;
+    nomeMesAtual.value = response.data.nomeMesAtual;
+    entradasMesAnterior.value = response.data.entradasAnterior;
+    saidasMesAnterior.value = response.data.saidasAnterior;
+    faturamentoMesAnterior.value = response.data.faturamentoAnterior;
+    nomeMesAnterior.value = response.data.nomeMesAnterior;
+  } catch (erro) {
+    console.error("Erro ao carregar buscar relatorio do mes:", erro);
+  }
+};
 
+onMounted(() => {
+  carregarRelatorioMes();
+});
 </script>
 
 <template>
@@ -26,20 +66,20 @@ const logout = () =>{
       </div>
 
       <div class="painel_infosMes">
-        <p>Maio:</p>
-        <p>Renda Mensal: 800.00$</p>
+        <p class="painel_nomeMes">{{ nomeMesAtual }}:</p>
+        <p>Renda Mensal: R${{ faturamentoMesAtual }}</p>
         <div class="painel_ifoEntradaSaida">
-          <p>Entradas: 3</p>
-          <p>Saidas: 1</p>
+          <p>Entradas: {{ entradasMesAtual }}</p>
+          <p>Saidas: {{ saidasMesAtual }}</p>
         </div>
       </div>
 
-      <div class="painel_infosMes">
-        <p>Abril:</p>
-        <p>Renda Mensal: 3.200.00$</p>
+      <div class="painel_infosMes" v-if="nomeMesAnterior">
+        <p class="painel_nomeMes">{{ nomeMesAnterior }}:</p>
+        <p>Renda Mensal: R${{ faturamentoMesAnterior }}</p>
         <div class="painel_ifoEntradaSaida">
-          <p>Entradas: 8</p>
-          <p>Saidas: 3</p>
+          <p>Entradas: {{ entradasMesAnterior }}</p>
+          <p>Saidas: {{ saidasMesAnterior }}</p>
         </div>
       </div>
       <div class="painel_sair">
@@ -47,7 +87,7 @@ const logout = () =>{
         <i @click="logout" class="pi pi-sign-out"></i>
       </div>
 
-       <i @click="voltar" class="pi pi-times"></i>
+      <i @click="voltar" class="pi pi-times"></i>
     </div>
   </div>
 </template>
@@ -117,7 +157,7 @@ const logout = () =>{
   margin-bottom: 5px;
 }
 
-.painel_sair{
+.painel_sair {
   position: absolute;
   bottom: 20px;
   right: 10px;
@@ -125,19 +165,21 @@ const logout = () =>{
   align-items: center;
 }
 
-.painel_sair i{
- font-size: 25px;
- cursor: pointer;
+.painel_sair i {
+  font-size: 25px;
+  cursor: pointer;
 }
 
-.painel_sair i:hover{
+.painel_sair i:hover {
   transform: scale(1.1);
 }
 
-.painel_sair p{
+.painel_sair p {
   font-size: 20px;
   margin-right: 15px;
 }
 
-
+.painel_nomeMes {
+  text-transform: uppercase;
+}
 </style>
