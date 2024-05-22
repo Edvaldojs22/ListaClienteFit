@@ -46,7 +46,7 @@ const carregarRelatorioMes = async () => {
     saidasMesAnterior.value = response.data.saidasAnterior;
     faturamentoMesAnterior.value = response.data.faturamentoAnterior;
     nomeMesAnterior.value = response.data.nomeMesAnterior;
-    console.log(response.data);
+    
   } catch (erro) {
     console.error("Erro ao carregar buscar relatorio do mes:", erro);
   }

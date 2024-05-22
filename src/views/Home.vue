@@ -11,6 +11,7 @@ import IconFilter from "../assets/img/filter.png";
 import { useRouter } from "vue-router";
 import api from "../api/api.js";
 
+
 //Codigo para obter data e Hora
 let anoAtual = ref("");
 let mesAtual = ref("");
@@ -101,7 +102,6 @@ const carregarClientes = async () => {
     next = response.data.next;
     previous = response.data.previous;
     quantidadesAtivo = response.data.results.length;
-
     nextTick(() => {
       const corPagamento = document.querySelectorAll(".vencimento"); // Seleciona todos os elementos com a classe .vencimento
 
@@ -358,9 +358,7 @@ const fechaCard = () => {
   cardErro.style.display = "none"
 };
 
-const fverificacao = () =>{
 
-}
 </script>
 
 <template>

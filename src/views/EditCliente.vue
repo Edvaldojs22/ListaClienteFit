@@ -115,7 +115,7 @@ const fechaCard = () => {
         <input
           v-model="cliente.phone"
           id="password"
-          type="text"
+          type="number"
           maxlength="11"
         />
       </div>

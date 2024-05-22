@@ -112,7 +112,7 @@ const fechaCard = () => {
 
       <div class="caixa_ipuntAdd">
         <p>Telefone:</p>
-        <input v-model="cliente.phone" id="phone" type="text" maxlength="11" />
+        <input v-model="cliente.phone" id="phone" type="number" maxlength="11" />
       </div>
 
       <div class="caixa_ipuntAdd">

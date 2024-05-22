@@ -12,7 +12,9 @@
     "axios": "^1.6.8",
     "jwt-decode": "^4.0.0",
     "jwt-decoder": "^0.0.0",
+    "maska": "^2.1.11",
     "primeicons": "^7.0.0",
+    "v-mask": "^2.3.0",
     "vue": "^3.4.21",
     "vue-router": "^4.3.2",
     "vuex": "^4.1.0"

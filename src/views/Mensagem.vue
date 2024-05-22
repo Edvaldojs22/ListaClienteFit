@@ -24,7 +24,7 @@ const salvarMensagem = (event) => {
       </div>
       <form action="" class="formMsg">
         <label for="novaMensagem">Nova Mensagem</label>
-        <textarea name="novaMensagem">$cliente$,$diaVencimento$</textarea>
+        <textarea name="novaMensagem">$cliente$ $diaVencimento$</textarea>
         <button type="sumbit" @click="salvarMensagem"  class="botaoSalvar">Salvar</button>
       </form>
        <i @click="voltar" class="pi pi-times"></i>

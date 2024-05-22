@@ -2,7 +2,7 @@
 import Logo from "../assets/img/imgLogo.png";
 import { useRouter } from "vue-router";
 import axios from "axios";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import api from "../api/api";
 
 const route = useRouter();
@@ -16,7 +16,6 @@ const handleLogin = async () => {
       username: username.value,
       password: password.value,
     });
-    console.log("aqui");
     // Se o login for bem-sucedido, armazenar o token e redirecionar
     if (response.data.token) {
       localStorage.setItem("token", response.data.token);
@@ -26,16 +25,34 @@ const handleLogin = async () => {
       console.error("Falha no login");
     }
   } catch (error) {
+    cardErro.style.display = "flex";
+    setTimeout(() => fechaCard(cardErro), 2000);
     console.error(
       "Erro durante o login:",
       error.response?.data || error.message
     );
   }
 };
+
+let cardErro;
+onMounted(() => {
+  cardErro = document.querySelector(".erro");
+});
+
+const fechaCard = () => {
+  cardErro.style.display = "none";
+};
 </script>
 
 <template>
   <div class="painel_login">
+    <!-- //Card para tratamento -->
+    <div class="card erro">
+      <p>Usuario ou senha invalidos</p>
+      <i class="pi pi-times-circle"></i>
+    </div>
+
+    <!-- -------------------------------- -->
     <div class="cor_top"></div>
     <div class="cor_bottom"></div>
     <form action="" class="login">
