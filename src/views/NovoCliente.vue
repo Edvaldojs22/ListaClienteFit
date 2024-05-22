@@ -55,9 +55,7 @@ const adicionarCliente = async () => {
   // Fazer a requisição POST para o servidor
   try {
     const response = await api.post("/clientes", clienteData);
-    setInterval(() => {
-      route.push({ name: "home" });
-    }, 2000);
+
     cardSucesso.style.display = "flex";
     setTimeout(fechaCard, 2000);
   } catch (error) {
@@ -112,7 +110,12 @@ const fechaCard = () => {
 
       <div class="caixa_ipuntAdd">
         <p>Telefone:</p>
-        <input v-model="cliente.phone" id="phone" type="number" maxlength="11" />
+        <input
+          v-model="cliente.phone"
+          id="phone"
+          type="number"
+          maxlength="11"
+        />
       </div>
 
       <div class="caixa_ipuntAdd">
