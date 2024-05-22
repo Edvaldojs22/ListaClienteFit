@@ -22,6 +22,7 @@ const voltar = () => {
 };
 
 const logout = () => {
+  localStorage.removeItem("token");
   route.push({ name: "login" });
 };
 
@@ -29,7 +30,7 @@ const carregarRelatorioMes = async () => {
   const dataAtual = new Date();
   anoAtual.value = dataAtual.getFullYear();
   mesAtual.value = dataAtual.getMonth() + 1;
-  
+
   try {
     const response = await api.get("/mes/usuario", {
       params: {
@@ -45,7 +46,7 @@ const carregarRelatorioMes = async () => {
     saidasMesAnterior.value = response.data.saidasAnterior;
     faturamentoMesAnterior.value = response.data.faturamentoAnterior;
     nomeMesAnterior.value = response.data.nomeMesAnterior;
-    console.log(response.data)
+    console.log(response.data);
   } catch (erro) {
     console.error("Erro ao carregar buscar relatorio do mes:", erro);
   }
