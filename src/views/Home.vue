@@ -88,6 +88,9 @@ const carregarRelatorioMes = async () => {
 let corPagamento; //Variavel para controle de cor pagamento
 const carregarClientes = async () => {
   try {
+    if (!diaAtual.value) {
+      diaAtual.value = new Date().getDate();
+    }
     const response = await api.get("/clientes", {
       params: {
         page: pagina,
