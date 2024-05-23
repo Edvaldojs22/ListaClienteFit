@@ -41,6 +41,9 @@ const cliente = ref({
 });
 
 const adicionarCliente = async () => {
+   if (!cliente.value.birthdate) {
+    cliente.value.birthdate = "";
+  }
   // Preparar os dados do cliente para envio
   const clienteData = {
     name: cliente.value.name,

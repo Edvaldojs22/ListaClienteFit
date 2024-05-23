@@ -20,7 +20,6 @@ const handleLogin = async () => {
 
     if (response.data.token) {
       let decoded = VueJwtDecode.decode(response.data.token);
-      console.log(decoded);
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", decoded.username);
       route.push({ name: "home" });
