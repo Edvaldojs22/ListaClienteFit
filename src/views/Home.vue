@@ -76,10 +76,8 @@ const carregarRelatorioMes = async () => {
         monthNumber: mesAtualInteger.value,
       },
     });
-    if (response.data) {
-      qtdEntradasMes.value = response.data.newClients;
-      qtdSaidasMes.value = response.data.clientsLeft;
-    }
+    qtdEntradasMes.value = response.data.newClients;
+    qtdSaidasMes.value = response.data.clientsLeft;
   } catch (erro) {
     console.error("Erro ao carregar buscar relatorio do mes:", erro);
   }
