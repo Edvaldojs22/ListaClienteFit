@@ -4,6 +4,7 @@ import { useRouter } from "vue-router";
 import axios from "axios";
 import { onMounted, ref } from "vue";
 import api from "../api/api";
+import VueJwtDecode from "vue-jwt-decode";
 
 const route = useRouter();
 const username = ref("");
@@ -16,9 +17,12 @@ const handleLogin = async () => {
       username: username.value,
       password: password.value,
     });
-    // Se o login for bem-sucedido, armazenar o token e redirecionar
+
     if (response.data.token) {
+      let decoded = VueJwtDecode.decode(response.data.token);
+      console.log(decoded);
       localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", decoded.username);
       route.push({ name: "home" });
     } else {
       // Trate o caso de falha no login

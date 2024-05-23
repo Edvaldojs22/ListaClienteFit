@@ -4,6 +4,7 @@ import IconsUser from "../assets/img/user.png";
 import api from "../api/api.js";
 import { ref, onMounted } from "vue";
 
+const usuario = ref("");
 const anoAtual = ref("");
 const mesAtual = ref("");
 const nomeMesAtual = ref();
@@ -23,6 +24,7 @@ const voltar = () => {
 
 const logout = () => {
   localStorage.removeItem("token");
+  localStorage.removeItem("user");
   route.push({ name: "login" });
 };
 
@@ -46,13 +48,16 @@ const carregarRelatorioMes = async () => {
     saidasMesAnterior.value = response.data.saidasAnterior;
     faturamentoMesAnterior.value = response.data.faturamentoAnterior;
     nomeMesAnterior.value = response.data.nomeMesAnterior;
-    
   } catch (erro) {
     console.error("Erro ao carregar buscar relatorio do mes:", erro);
   }
 };
 
 onMounted(() => {
+  if (!usuario.value) {
+    usuario.value = localStorage.getItem("user");
+  }
+
   carregarRelatorioMes();
 });
 </script>
@@ -64,7 +69,7 @@ onMounted(() => {
     <div action="" class="painel_user">
       <div class="painel_imgP">
         <img :src="IconsUser" alt="" />
-        <p>José Leandro</p>
+        <p>{{ usuario }}</p>
       </div>
 
       <div class="painel_infosMes">
