@@ -11,7 +11,6 @@ import IconFilter from "../assets/img/filter.png";
 import { useRouter } from "vue-router";
 import api from "../api/api.js";
 
-
 //Codigo para obter data e Hora
 let anoAtual = ref("");
 let mesAtual = ref("");
@@ -77,8 +76,10 @@ const carregarRelatorioMes = async () => {
         monthNumber: mesAtualInteger.value,
       },
     });
-    qtdEntradasMes.value = response.data.newClients;
-    qtdSaidasMes.value = response.data.clientsLeft;
+    if (response.data) {
+      qtdEntradasMes.value = response.data.newClients;
+      qtdSaidasMes.value = response.data.clientsLeft;
+    }
   } catch (erro) {
     console.error("Erro ao carregar buscar relatorio do mes:", erro);
   }
@@ -355,10 +356,8 @@ onMounted(() => {
 
 const fechaCard = () => {
   cardSucesso.style.display = "none";
-  cardErro.style.display = "none"
+  cardErro.style.display = "none";
 };
-
-
 </script>
 
 <template>

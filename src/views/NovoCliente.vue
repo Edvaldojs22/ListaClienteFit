@@ -56,6 +56,7 @@ const adicionarCliente = async () => {
   try {
     const response = await api.post("/clientes", clienteData);
 
+    voltar();
     cardSucesso.style.display = "flex";
     setTimeout(fechaCard, 2000);
   } catch (error) {
