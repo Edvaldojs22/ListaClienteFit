@@ -58,7 +58,6 @@ const adicionarCliente = async () => {
   // Fazer a requisição POST para o servidor
   try {
     const response = await api.post("/clientes", clienteData);
-
     voltar();
     cardSucesso.style.display = "flex";
     setTimeout(fechaCard, 2000);

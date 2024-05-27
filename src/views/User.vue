@@ -74,21 +74,41 @@ onMounted(() => {
 
       <div class="painel_infosMes">
         <p class="painel_nomeMes">{{ nomeMesAtual }}:</p>
-        <p>Renda Mensal: R${{ faturamentoMesAtual }}</p>
-        <div class="painel_ifoEntradaSaida">
-          <p>Entradas: {{ entradasMesAtual }}</p>
-          <p>Saidas: {{ saidasMesAtual }}</p>
-        </div>
+        <p>Renda Bruta: $ {{ faturamentoMesAtual }}</p>
+        <form class="painel_gastos">
+          <p>Gastos</p>
+          <div class="painel_campoGastos">
+            <div class="addValue">
+              <p>Personal: $</p>
+              <input type="number" />
+            </div>
+            <div class="addValue">
+              <p>Site: $</p>
+              <input type="number" />
+            </div>
+            <div class="addValue">
+              <p>Energia: $</p>
+              <input type="number" />
+            </div>
+            <div class="addValue">
+              <p>Àgua: $</p>
+              <input type="number" />
+            </div>
+            <div class="addValue">
+              <p>Outros: $</p>
+              <input type="number" />
+            </div>
+          </div>
+          <div class="painel_buotaoLucro">
+            <button class="botaoGastos">Calcular</button>
+            <div class="painel_lucro">
+              <p>Lucro: $</p>
+              <p>00.00</p>
+            </div>
+          </div>
+        </form>
       </div>
 
-      <div class="painel_infosMes" v-if="nomeMesAnterior">
-        <p class="painel_nomeMes">{{ nomeMesAnterior }}:</p>
-        <p>Renda Mensal: R${{ faturamentoMesAnterior }}</p>
-        <div class="painel_ifoEntradaSaida">
-          <p>Entradas: {{ entradasMesAnterior }}</p>
-          <p>Saidas: {{ saidasMesAnterior }}</p>
-        </div>
-      </div>
       <div class="painel_sair">
         <p>Sair</p>
         <i @click="logout" class="pi pi-sign-out"></i>
@@ -137,7 +157,7 @@ onMounted(() => {
 .painel_infosMes {
   width: calc(100% - 30px);
   max-width: 350px;
-  height: 130px;
+  height: 300px;
   background-color: #5e9d406c;
   border-bottom: solid 6px #0d2a14;
   border-left: solid 6px #0d2a14;
@@ -146,22 +166,81 @@ onMounted(() => {
   font-size: 18px;
   display: flex;
   flex-direction: column;
-  justify-content: end;
-  align-items: center;
-  gap: 25px;
+  justify-content: center;
+  gap: 15px;
+  z-index: 1;
+}
+.painel_nomeMes {
+  text-transform: uppercase;
 }
 
 .painel_infosMes > p:nth-child(1) {
-  position: absolute;
-  top: 0;
-  left: 6px;
+  margin-top: 5px;
+  margin-left: 10px;
+}
+.painel_infosMes > p:nth-child(2) {
+  margin-top: 20px;
+  text-align: center;
 }
 
-.painel_ifoEntradaSaida {
-  width: 100%;
+.painel_gastos {
+  height: 200px;
+  margin-top: 25px;
+
+}
+.painel_gastos p:nth-child(1) {
+  text-align: center;
+}
+
+.painel_campoGastos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-left: 15px;
+  margin-top: 20px;
+}
+
+.addValue {
+  height: 30px;
+}
+
+.addValue p {
+  display: inline-block;
+  font-size: 15px;
+}
+
+.addValue input {
+  width: 50px;
+  background-color: transparent;
+  border: none;
+  border-bottom: solid 1px black;
+  padding-left: 10px;
+  outline: none;
+}
+
+.painel_buotaoLucro {
   display: flex;
-  justify-content: space-around;
-  margin-bottom: 5px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
+  margin-top: 10px;
+}
+.botaoGastos {
+  background-color: #174118;
+  border: none;
+  color: white;
+  width: 90px;
+  height: 25px;
+  border-radius: 5px;
+  font-size: 13px;
+}
+
+.painel_buotaoLucro p {
+  font-size: 16px;
+}
+
+.painel_lucro {
+  display: flex;
+  gap: 5px;
 }
 
 .painel_sair {
@@ -184,9 +263,5 @@ onMounted(() => {
 .painel_sair p {
   font-size: 20px;
   margin-right: 15px;
-}
-
-.painel_nomeMes {
-  text-transform: uppercase;
 }
 </style>

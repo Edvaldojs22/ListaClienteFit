@@ -85,9 +85,12 @@ const carregarRelatorioMes = async () => {
   }
 };
 
+
+
 //
 //Carrega clientes ativos inicialmente
 let corPagamento; //Variavel para controle de cor pagamento
+let qntClientesAtivos = ref('');
 const carregarClientes = async () => {
   try {
     const response = await api.get("/clientes", {
@@ -131,6 +134,7 @@ const carregarClientes = async () => {
         }
       });
     });
+    
   } catch (erro) {
     console.error("Erro ao carregar clientesAtivos:", erro);
   }
