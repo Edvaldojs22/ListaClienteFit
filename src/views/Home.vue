@@ -66,6 +66,7 @@ let next = "";
 let previous = "";
 let qtdEntradasMes = ref();
 let qtdSaidasMes = ref();
+let qtdAtivosMes = ref();
 
 //carrega dados do mes atual
 const carregarRelatorioMes = async () => {
@@ -78,17 +79,16 @@ const carregarRelatorioMes = async () => {
     });
     qtdEntradasMes.value = response.data.newClients;
     qtdSaidasMes.value = response.data.clientsLeft;
+    qtdAtivosMes.value = response.data.activeClients;
   } catch (erro) {
     console.error("Erro ao carregar buscar relatorio do mes:", erro);
   }
 };
 
-
-
 //
 //Carrega clientes ativos inicialmente
 let corPagamento; //Variavel para controle de cor pagamento
-let qntClientesAtivos = ref('');
+let qntClientesAtivos = ref("");
 const carregarClientes = async () => {
   try {
     if (!diaAtual.value) {
@@ -135,7 +135,6 @@ const carregarClientes = async () => {
         }
       });
     });
-    
   } catch (erro) {
     console.error("Erro ao carregar clientesAtivos:", erro);
   }
@@ -395,7 +394,7 @@ const fechaCard = () => {
         </div>
         <div class="ativos">
           <p>{{ mesAtual }}</p>
-          <p>{{ quantidadesAtivo }}</p>
+          <p>{{ qtdAtivosMes }}</p>
           <p>Ativos</p>
         </div>
         <div class="entradas_saidas">
