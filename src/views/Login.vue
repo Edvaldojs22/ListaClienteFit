@@ -1,7 +1,6 @@
 <script setup>
 import Logo from "../assets/img/imgLogo.png";
 import { useRouter } from "vue-router";
-import axios from "axios";
 import { onMounted, ref } from "vue";
 import api from "../api/api";
 import VueJwtDecode from "vue-jwt-decode";
@@ -18,14 +17,15 @@ const handleLogin = async () => {
       password: password.value,
     });
 
-    if (response.data.token) {
-      let decoded = VueJwtDecode.decode(response.data.token);
-      localStorage.setItem("token", response.data.token);
+    const token = response.data.token;
+    if (token) {
+      let decoded = VueJwtDecode.decode(token);
+      localStorage.setItem("token", token);
       localStorage.setItem("user", decoded.username);
       route.push({ name: "home" });
     } else {
-      // Trate o caso de falha no login
       console.error("Falha no login");
+      throw new error();
     }
   } catch (error) {
     cardErro.style.display = "flex";

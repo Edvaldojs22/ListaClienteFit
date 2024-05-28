@@ -6,6 +6,7 @@ import NovoCliente from "../views/NovoCliente.vue";
 import Mensagem from "../views/Mensagem.vue";
 import MensagemAniversario from "../views/MensagemAniversario.vue";
 import User from "../views/User.vue";
+import { isTokenExpired } from "../api/api";
 
 const routes = [
   {
@@ -60,7 +61,8 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = !!localStorage.getItem("token");
+  const token = localStorage.getItem("token");
+  const isAuthenticated = !!token && !isTokenExpired(token);
   if (
     to.matched.some((record) => record.meta.requiresAuth) &&
     !isAuthenticated
