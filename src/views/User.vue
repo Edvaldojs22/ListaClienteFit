@@ -88,7 +88,7 @@ onMounted(() => {
             </div>
             <div class="addValue">
               <p>Energia: $</p>
-              <input  value="" type="number" />
+              <input  value="0" type="number" />
             </div>
             <div class="addValue">
               <p>Àgua: $</p>
