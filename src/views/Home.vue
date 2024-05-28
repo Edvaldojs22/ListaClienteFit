@@ -76,10 +76,8 @@ const carregarRelatorioMes = async () => {
         monthNumber: mesAtualInteger.value,
       },
     });
-    if (response.data) {
-      qtdEntradasMes.value = response.data.newClients;
-      qtdSaidasMes.value = response.data.clientsLeft;
-    }
+    qtdEntradasMes.value = response.data.newClients;
+    qtdSaidasMes.value = response.data.clientsLeft;
   } catch (erro) {
     console.error("Erro ao carregar buscar relatorio do mes:", erro);
   }
@@ -93,6 +91,9 @@ let corPagamento; //Variavel para controle de cor pagamento
 let qntClientesAtivos = ref('');
 const carregarClientes = async () => {
   try {
+    if (!diaAtual.value) {
+      diaAtual.value = new Date().getDate();
+    }
     const response = await api.get("/clientes", {
       params: {
         page: pagina,
