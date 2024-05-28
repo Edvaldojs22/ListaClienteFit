@@ -80,23 +80,23 @@ onMounted(() => {
           <div class="painel_campoGastos">
             <div class="addValue">
               <p>Personal: $</p>
-              <input type="number" />
+              <input  value="0" type="number" />
             </div>
             <div class="addValue">
               <p>Site: $</p>
-              <input type="number" />
+              <input  value="0" type="number" />
             </div>
             <div class="addValue">
               <p>Energia: $</p>
-              <input type="number" />
+              <input  value="" type="number" />
             </div>
             <div class="addValue">
               <p>Àgua: $</p>
-              <input type="number" />
+              <input value="0" type="number" />
             </div>
             <div class="addValue">
               <p>Outros: $</p>
-              <input type="number" />
+              <input  value="0" type="number" />
             </div>
           </div>
           <div class="painel_buotaoLucro">
@@ -209,11 +209,11 @@ onMounted(() => {
 }
 
 .addValue input {
-  width: 50px;
+  width: 40px;
   background-color: transparent;
   border: none;
   border-bottom: solid 1px black;
-  padding-left: 10px;
+  padding-left: 5px;
   outline: none;
 }
 
