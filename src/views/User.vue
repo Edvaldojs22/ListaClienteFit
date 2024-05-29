@@ -8,13 +8,11 @@ const usuario = ref("");
 const anoAtual = ref("");
 const mesAtual = ref("");
 const nomeMesAtual = ref();
-const nomeMesAnterior = ref();
 let faturamentoMesAtual = ref("");
-let faturamentoMesAnterior = ref("");
 let entradasMesAtual = ref("");
 let saidasMesAtual = ref("");
-let entradasMesAnterior = ref("");
-let saidasMesAnterior = ref("");
+let gastos = ref("");
+let lucro = ref("");
 
 const route = useRouter();
 
@@ -44,12 +42,32 @@ const carregarRelatorioMes = async () => {
     saidasMesAtual.value = response.data.saidasAtual;
     faturamentoMesAtual.value = response.data.faturamentoAtual;
     nomeMesAtual.value = response.data.nomeMesAtual;
-    entradasMesAnterior.value = response.data.entradasAnterior;
-    saidasMesAnterior.value = response.data.saidasAnterior;
-    faturamentoMesAnterior.value = response.data.faturamentoAnterior;
-    nomeMesAnterior.value = response.data.nomeMesAnterior;
+    gastos.value = response.data.gastos;
+    lucro.value = parseFloat(faturamentoMesAtual.value - gastos.value.total);
   } catch (erro) {
     console.error("Erro ao carregar buscar relatorio do mes:", erro);
+  }
+};
+
+const atualizarGastosMensais = async () => {
+  const expenses = {
+    personal: gastos.value.personal,
+    energy: gastos.value.energia,
+    water: gastos.value.agua,
+    site: gastos.value.site,
+    other: gastos.value.outros,
+  };
+  try {
+    const response = await api.put("/mes/gastos", {
+      params: {
+        year: anoAtual.value,
+        monthNumber: mesAtual.value,
+        expenses: expenses,
+      },
+    });
+    lucro.value = parseFloat(faturamentoMesAtual.value - gastos.value.total);
+  } catch (erro) {
+    console.error("Erro ao atualizar gastos do mes:", erro);
   }
 };
 
@@ -80,30 +98,32 @@ onMounted(() => {
           <div class="painel_campoGastos">
             <div class="addValue">
               <p>Personal: $</p>
-              <input  value="0" type="number" />
+              <input v-model="gastos.personal" type="number" />
             </div>
             <div class="addValue">
               <p>Site: $</p>
-              <input  value="0" type="number" />
+              <input v-model="gastos.site" type="number" />
             </div>
             <div class="addValue">
               <p>Energia: $</p>
-              <input  value="0" type="number" />
+              <input v-model="gastos.energia" type="number" />
             </div>
             <div class="addValue">
               <p>Àgua: $</p>
-              <input value="0" type="number" />
+              <input v-model="gastos.agua" type="number" />
             </div>
             <div class="addValue">
               <p>Outros: $</p>
-              <input  value="0" type="number" />
+              <input v-model="gastos.outros" type="number" />
             </div>
           </div>
           <div class="painel_buotaoLucro">
-            <button class="botaoGastos">Calcular</button>
+            <button @click.prevent="atualizarGastosMensais" class="botaoGastos">
+              atualizar
+            </button>
             <div class="painel_lucro">
               <p>Lucro: $</p>
-              <p>00.00</p>
+              <p>{{ lucro }}</p>
             </div>
           </div>
         </form>
@@ -186,7 +206,6 @@ onMounted(() => {
 .painel_gastos {
   height: 200px;
   margin-top: 25px;
-
 }
 .painel_gastos p:nth-child(1) {
   text-align: center;
