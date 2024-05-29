@@ -65,7 +65,7 @@ const atualizarGastosMensais = async () => {
         expenses: expenses,
       },
     });
-    lucro.value = parseFloat(faturamentoMesAtual.value - gastos.value.total);
+    carregarRelatorioMes();
   } catch (erro) {
     console.error("Erro ao atualizar gastos do mes:", erro);
   }
