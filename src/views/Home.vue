@@ -102,7 +102,6 @@ const carregarClientes = async () => {
         isActive: isActive,
       },
     });
-
     exiberCliente.value = response.data.results;
     next = response.data.next;
     previous = response.data.previous;
@@ -140,6 +139,24 @@ const carregarClientes = async () => {
   }
 };
 carregarClientes();
+
+const carregaClientesAtraso = async () => {
+  try {
+    const response = await api.get("/clientes", {
+      params: {
+        paymentStatus: false, // Filtra apenas clientes com pagamento não confirmado
+      },
+    });
+
+    const clientesAtrasados = response.data.results.filter(
+      (cliente) => cliente.paymentStatus === false
+    );
+    exiberCliente.value = clientesAtrasados;
+    console.log(exiberCliente.value);
+  } catch (erro) {
+    console.error("Erro ao carregar clientes em atraso:", erro);
+  }
+};
 
 //Codigo ativa botões para selecionar lista
 let filter;
@@ -197,6 +214,9 @@ const mudarLista = (event) => {
     valorP_tipoLista.innerHTML = "Clientes Inativos";
     isActive = false;
     carregarClientes();
+    telaLista.style.display = "none";
+  } else if (ativoInativo == "atraso") {
+    valorP_tipoLista.innerHTML = "Clientes em Atraso";
     telaLista.style.display = "none";
   }
 };
@@ -429,6 +449,7 @@ const fechaCard = () => {
         <div class="campo_pesquisa_lista">
           <p @click="mudarLista" id="ativos">Clientes Ativos</p>
           <p @click="mudarLista" id="inativos">Clientes Inativos</p>
+          <p @click="mudarLista" id="atraso">Em Atraso</p>
           <i @click="fechaConteudos" class="pi pi-times"></i>
         </div>
         <!-- ---------------------- -->
@@ -767,7 +788,9 @@ img {
 .campo_pesquisa_lista p:nth-child(2) {
   background-color: #851000;
 }
-
+.campo_pesquisa_lista p:nth-child(3) {
+  background-color: #851000;
+}
 .campo_cliente_opcoes {
   font-family: "itim";
 }

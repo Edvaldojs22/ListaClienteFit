@@ -34,7 +34,7 @@ const voltar = () => {
 const cliente = ref({
   name: "",
   phone: "",
-  birthdate: "",
+  birthdate: "11/01/11111",
   enrollmentDate: "",
   dueDay: "",
   active: true,
@@ -121,10 +121,10 @@ const fechaCard = () => {
         />
       </div>
 
-      <div class="caixa_ipuntAdd">
+      <!-- <div class="caixa_ipuntAdd">
         <p>Data Nascimento:</p>
         <input v-model="cliente.birthdate" id="dataNascimenti" type="text" />
-      </div>
+      </div> -->
 
       <div class="caixa_ipuntAdd">
         <p>Data Entrada:</p>
